@@ -108,10 +108,10 @@
     !CASE (ltng_crm_PR92w,ltng_crm_PR92z)
     !+++ kac +++
     CASE (ltng_crm_PR92w,ltng_crm_PR92z,ltng_crm_DP08_up,ltng_crm_P05_iwp,ltng_crm_D08_pim,ltng_crm_D08_imfp,&
-    		ltng_crm_CSU_GEV,ltng_crm_CSU_35EV,ltng_crm_CSU_PIM, &
-    		ltng_crm_AL_GEV10,ltng_crm_AL_GEV5,ltng_crm_AL_UP510, &
-		ltng_crm_AL_supcell_GEV10,ltng_crm_AL_supcell_GEV5,ltng_crm_AL_supcell_UP510, &
-		ltng_crm_F14_iceflux,ltng_crm_CSU_29May)
+            ltng_crm_CSU_GEV,ltng_crm_CSU_35EV,ltng_crm_CSU_PIM, &
+            ltng_crm_AL_GEV10,ltng_crm_AL_GEV5,ltng_crm_AL_UP510, &
+        ltng_crm_AL_supcell_GEV10,ltng_crm_AL_supcell_GEV5,ltng_crm_AL_supcell_UP510, &
+        ltng_crm_F14_iceflux,ltng_crm_CSU_29May)
     !--- kac ---
         IF ( do_radar_ref .eq. 0 .or. mp_physics .eq. 0) THEN
           CALL wrf_error_fatal( ' lightning_init: Selected lightning option requires microphysics and do_radar_ref=1' )
@@ -227,17 +227,17 @@
                             ids, ide, jds, jde, kds, kde,         &
                             ims, ime, jms, jme, kms, kme,         &
                             its, ite, jts, jte, kts, kte,         &
-			  !+++ kac
-			  ! Morrison fallspeed for snow and graupel
-			    vts_morr, vtg_morr,                   &
+              !+++ kac
+              ! Morrison fallspeed for snow and graupel
+                vts_morr, vtg_morr,                   &
                           !--- kac
-			  ! Mandatory outputs for all quantitative schemes
+              ! Mandatory outputs for all quantitative schemes
                             ic_flashcount, ic_flashrate,          &
                             cg_flashcount, cg_flashrate,           &
-			  !+++kac
-			  !Need number concentration
-			    scalar                                &
-			  !---kac
+              !+++kac
+              !Need number concentration
+                scalar                                &
+              !---kac
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -251,26 +251,26 @@
 ! Parameterization options
  USE module_ltng_crmpr92       ! lightning_option == 1,   ltng_crm_PR92w
                                ! lightning_option == 2,   ltng_crm_PR92z
-			       ! lightning_option == 3,   ltng_crm_DP08_up
-			       ! lightning_option == 4,   ltng_crm_P05_iwp
-			       ! lightning_option == 5,   ltng_crm_D08_pim
-			       ! lightning_option == 6,   ltng_crm_D08_imfp
-			       
-			       ! lightning_option == 20,  ltng_crm_CSU_GEV
-			       ! lightning_option == 21,  ltng_crm_CSU_35EV
-			       ! lightning_option == 22,  ltng_crm_CSU_PIM
-			       
-			       ! lightning_option == 30,  ltng_crm_AL_GEV10
-			       ! lightning_option == 31,  ltng_crm_AL_GEV5
-			       ! lightning_option == 32,  ltng_crm_AL_UP510
-			       ! lightning_option == 33,  ltng_crm_AL_supcell_GEV10
-			       ! lightning_option == 34,  ltng_crm_AL_supcell_GEV5
-			       ! lightning_option == 35,  ltng_crm_AL_supcell_UP510
-			       
-			       ! lightning_option == 40,  ltng_crm_F14_iceflux
-			       
-			       ! lightning_option == 50,  ltng_crm_CSU_29May
-			       
+                   ! lightning_option == 3,   ltng_crm_DP08_up
+                   ! lightning_option == 4,   ltng_crm_P05_iwp
+                   ! lightning_option == 5,   ltng_crm_D08_pim
+                   ! lightning_option == 6,   ltng_crm_D08_imfp
+                   
+                   ! lightning_option == 20,  ltng_crm_CSU_GEV
+                   ! lightning_option == 21,  ltng_crm_CSU_35EV
+                   ! lightning_option == 22,  ltng_crm_CSU_PIM
+                   
+                   ! lightning_option == 30,  ltng_crm_AL_GEV10
+                   ! lightning_option == 31,  ltng_crm_AL_GEV5
+                   ! lightning_option == 32,  ltng_crm_AL_UP510
+                   ! lightning_option == 33,  ltng_crm_AL_supcell_GEV10
+                   ! lightning_option == 34,  ltng_crm_AL_supcell_GEV5
+                   ! lightning_option == 35,  ltng_crm_AL_supcell_UP510
+                   
+                   ! lightning_option == 40,  ltng_crm_F14_iceflux
+                   
+                   ! lightning_option == 50,  ltng_crm_CSU_29May
+                   
  USE module_ltng_cpmpr92z      ! lightning_option == 11,  ltng_cpm_PR92z
 
 ! IC:CG methods
@@ -406,13 +406,13 @@
 
         CALL ltng_crmpr92w ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
@@ -423,28 +423,28 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
     CASE( ltng_crm_PR92z )
         CALL wrf_debug ( 100, ' lightning_driver: calling Price and Rind 1992 (z_top, CRM)' )
         CALL ltng_crmpr92z ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -455,31 +455,31 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
-		  
+          
 !+++ kac +++
 
     CASE( ltng_crm_DP08_up )
         CALL wrf_debug ( 100, ' lightning_driver: calling Deierling and Petersen 2008 (up_vol, CRM)' )
         CALL ltng_crm_up ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac	
+          !+++kac
+            itimestep, dt,                        &
+          !---kac    
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
@@ -490,32 +490,32 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-                  )	
-		  
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+                  )    
+          
     CASE( ltng_crm_P05_iwp )
         CALL wrf_debug ( 100, ' lightning_driver: calling Petersen et al. 2005 (iwp, CRM)' )
         CALL ltng_crm_iwp ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
-                    rho, 				  &
-		    refl, reflthreshold, cellcount,       &
+                    rho,                   &
+            refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
                     cellcount_method,                     &
                   ! Order dependent args for domain, mem, and tile dims
@@ -524,106 +524,106 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qi=moist(ims,kms,jms,P_QI),		  &
-		  !+++kac
-		  !New variables
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          ! Moisture variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qg=moist(ims,kms,jms,P_QG),          &
+            qi=moist(ims,kms,jms,P_QI),          &
+          !+++kac
+          !New variables
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
 
     CASE( ltng_crm_D08_pim )
         CALL wrf_debug ( 100, ' lightning_driver: calling Deierling et al. 2008 (pim, CRM)' )
         CALL ltng_crm_pim ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
-                    rho, 				  &
-		    w, refl, reflthreshold, cellcount,    &
+                    rho,                   &
+            w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
                     cellcount_method,                     &
                   ! Order dependent args for domain, mem, and tile dims
                     ids, ide, jds, jde, kds, kde,         &
                     ims, ime, jms, jme, kms, kme,         &
                     its, ite, jts, jte, kts, kte,         &
-		  ! Fallspeed for snow
-		    vts_morr,                             &
+          ! Fallspeed for snow
+            vts_morr,                             &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
+          ! Moisture variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
 
     CASE( ltng_crm_D08_imfp )
         CALL wrf_debug ( 100, ' lightning_driver: calling Deierling et al. 2008 (imfp, CRM)' )
         CALL ltng_crm_imfp ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
-                    rho, 				  &
-		    w, refl, reflthreshold, cellcount,    &
+                    rho,                   &
+            w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
                     cellcount_method,                     &
                   ! Order dependent args for domain, mem, and tile dims
                     ids, ide, jds, jde, kds, kde,         &
                     ims, ime, jms, jme, kms, kme,         &
                     its, ite, jts, jte, kts, kte,         &
-		  ! Fallspeed for snow & graupel
-		    vts_morr, vtg_morr,                   &
+          ! Fallspeed for snow & graupel
+            vts_morr, vtg_morr,                   &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qi=moist(ims,kms,jms,P_QI),		  &
-		  !+++kac
-		  !New variables
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          ! Moisture variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qg=moist(ims,kms,jms,P_QG),          &
+            qi=moist(ims,kms,jms,P_QI),          &
+          !+++kac
+          !New variables
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_CSU_GEV )
         CALL wrf_debug ( 100, ' lightning_driver: calling CSU Basarb 2014 (GEV, CRM)' )
         CALL ltng_crm_csugev ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -634,30 +634,30 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
+          ! Moisture variables
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
 
     CASE( ltng_crm_CSU_35EV )
         CALL wrf_debug ( 100, ' lightning_driver: calling CSU Basarb 2014 (35EV, CRM)' )
         CALL ltng_crm_csu35ev ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -668,29 +668,29 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_CSU_PIM )
         CALL wrf_debug ( 100, ' lightning_driver: calling CSU Basarb 2014 (PIM, CRM)' )
         CALL ltng_crm_csupim ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -701,29 +701,29 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
 
     CASE( ltng_crm_AL_GEV10 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (GEV10, CRM)' )
         CALL ltng_crm_algev10 ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -734,30 +734,30 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          ! Moisture variables
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_AL_GEV5 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (GEV5, CRM)' )
         CALL ltng_crm_algev5 ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -768,30 +768,30 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          ! Moisture variables
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_AL_UP510 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (UP510, CRM)' )
         CALL ltng_crm_alup510 ( &
                   ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac	
+          !+++kac
+            itimestep, dt,                        &
+          !---kac    
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
@@ -802,29 +802,29 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
-		  
+          
     CASE( ltng_crm_AL_supcell_GEV10 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (supcell_GEV10, CRM)' )
         CALL ltng_crm_alsupcellgev10 ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -835,30 +835,30 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          ! Moisture variables
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_AL_supcell_GEV5 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (supcell_GEV5, CRM)' )
         CALL ltng_crm_alsupcellgev5 ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -869,30 +869,30 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		  !+++kac
-		  !New variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )
-		  
+          ! Moisture variables
+            qg=moist(ims,kms,jms,P_QG),          &
+          !+++kac
+          !New variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )
+          
     CASE( ltng_crm_AL_supcell_UP510 )
         CALL wrf_debug ( 100, ' lightning_driver: calling AL Carey 2014 (supcell_UP510, CRM)' )
         CALL ltng_crm_alsupcellup510 ( &
-                  ! Frequently used prognostics	
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+                  ! Frequently used prognostics    
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
@@ -903,28 +903,28 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
 
     CASE( ltng_crm_F14_iceflux )
         CALL wrf_debug ( 100, ' lightning_driver: calling Finney 2014 (iceflux, CRM)' )
         CALL ltng_crm_iceflux ( &
                   ! Frequently used prognostics 
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac	
+          !+++kac
+            itimestep, dt,                        &
+          !---kac    
                     dx, dy, xland, ht, z, t_phy, p_phy,   &
                   ! Scheme specific prognostics
-		    rho,				  &
+            rho,                  &
                     w, refl, reflthreshold, cellcount,    &
                   ! Scheme specific namelist inputs
                     cellcount_method,                     &
@@ -936,32 +936,32 @@
                     vts_morr, vtg_morr,                   &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  ! Moisture variables
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qi=moist(ims,kms,jms,P_QI),		  &
-		    qc=moist(ims,kms,jms,P_QC),	          &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		  !+++kac
-		  !New variables
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
+          ! Moisture variables
+            qs=moist(ims,kms,jms,P_QS),          &
+            qg=moist(ims,kms,jms,P_QG),          &
+            qi=moist(ims,kms,jms,P_QI),          &
+            qc=moist(ims,kms,jms,P_QC),              &
+            qr=moist(ims,kms,jms,P_QR),           &
+          !+++kac
+          !New variables
+            qv=moist(ims,kms,jms,P_QV),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
                   )
 
     CASE( ltng_crm_CSU_29May )
         CALL wrf_debug ( 100, ' lightning_driver: calling CSU Davis 29May (35EV, CRM)' )
         CALL ltng_crm_csu29May ( &
-		  ! Frequently used prognostics
-		  !+++kac
-		    itimestep, dt,                        &
-		  !---kac
+          ! Frequently used prognostics
+          !+++kac
+            itimestep, dt,                        &
+          !---kac
                     dx, dy, xland, ht, z, t_phy,          &
-		  !+++kac
-		    p_phy,                                &
-		  !---kac
+          !+++kac
+            p_phy,                                &
+          !---kac
                   ! Scheme specific prognostics
                     refl, reflthreshold, cellcount,       &
                   ! Scheme specific namelist inputs
@@ -972,21 +972,21 @@
                     its, ite, jts, jte, kts, kte,         &
                   ! Mandatory output for all quantitative schemes
                     total_flashrate,                      &
-		  !+++kac
-		  !New variables
-		    qg=moist(ims,kms,jms,P_QG),		  &
-		    qs=moist(ims,kms,jms,P_QS),		  &
-		    qv=moist(ims,kms,jms,P_QV),           &
-		    qr=moist(ims,kms,jms,P_QR),           &
-		    nr=scalar(ims,kms,jms,P_QNR),         &
-		    ns=scalar(ims,kms,jms,P_QNS),         &
-		    ng=scalar(ims,kms,jms,P_QNG)          &
-		  !---kac
-		  )		  
+          !+++kac
+          !New variables
+            qg=moist(ims,kms,jms,P_QG),          &
+            qs=moist(ims,kms,jms,P_QS),          &
+            qv=moist(ims,kms,jms,P_QV),           &
+            qr=moist(ims,kms,jms,P_QR),           &
+            nr=scalar(ims,kms,jms,P_QNR),         &
+            ns=scalar(ims,kms,jms,P_QNS),         &
+            ng=scalar(ims,kms,jms,P_QNG)          &
+          !---kac
+          )          
 
-!--- kac ---		  
-		
-		  
+!--- kac ---          
+        
+          
 !   CASE ( another_crm_option)
 !       CALL ...
 
