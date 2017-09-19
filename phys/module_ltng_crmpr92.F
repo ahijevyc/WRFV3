@@ -755,7 +755,7 @@ CALL wrf_debug ( 0,message )
 
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi    !snow, grauple, ice mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi    !snow, graupel, ice mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
  REAL, DIMENSION( ims:ime, kms:kme, jms:jme )                   :: qs_k, qg_k, qi_k, qr_k, nr_k, ns_k, ng_k
  REAL, DIMENSION(          kps:kpe          )                   :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
@@ -1050,7 +1050,7 @@ CALL wrf_debug ( 0,message )
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg    !snow, grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg    !snow, graupel mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
@@ -1627,7 +1627,7 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !graupel mixing ratios
 !++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
@@ -2364,7 +2364,7 @@ SUBROUTINE ltng_crm_algev10 ( &
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !graupel mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
@@ -2607,7 +2607,7 @@ SUBROUTINE ltng_crm_algev5 ( &
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !graupel mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
@@ -3090,7 +3090,7 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !graupel mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
@@ -3332,7 +3332,7 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !graupel mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
