@@ -22,13 +22,9 @@
 
  SUBROUTINE ltng_crmpr92w ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             w, refl, reflthreshold, cellcount,    &
                           ! Scheme specific namelist inputs
@@ -39,10 +35,8 @@
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -58,26 +52,20 @@
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg,qs,qv,qr,nr,ns,ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ 
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
@@ -101,14 +89,11 @@
  INTEGER :: k_maxcount
  REAL :: maxcount
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -186,7 +171,6 @@
           ! Outputs
             cellcount_kac )
  
-!---kac
 
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
@@ -224,11 +208,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN			!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN            !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE									!KAC Added
-   ave_fr = 0.								!KAC Added
- ENDIF									!KAC Added
+ ELSE                                    !KAC Added
+   ave_fr = 0.                                !KAC Added
+ ENDIF                                    !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -238,13 +222,9 @@ CALL wrf_debug ( 0,message )
 
  SUBROUTINE ltng_crmpr92z ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
                           ! Scheme specific namelist inputs
@@ -255,10 +235,8 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -274,26 +252,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg,qs,qv,qr,nr,ns,ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ 
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -316,14 +288,11 @@ CALL wrf_debug ( 0,message )
  INTEGER :: k_maxcount, count
  REAL :: maxcount, mostlyLand
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -401,7 +370,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
@@ -467,11 +435,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN			!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN            !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE									!KAC Added
-   ave_fr = 0.								!KAC Added
- ENDIF	
+ ELSE                                    !KAC Added
+   ave_fr = 0.                                !KAC Added
+ ENDIF    
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold  )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -484,13 +452,9 @@ CALL wrf_debug ( 0,message )
  ! UPDRAFT VOLUME FRPS
  SUBROUTINE ltng_crm_up ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             w, refl, reflthreshold, cellcount,    &
                           ! Scheme specific namelist inputs
@@ -501,10 +465,8 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -520,26 +482,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg,qs,qv,qr,nr,ns,ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ 
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
@@ -557,22 +513,19 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: up_5ms          	! upvol (m3)
- REAL :: total_fr,ave_fr 	! cloud flash rate
+ REAL :: up_5ms              ! upvol (m3)
+ REAL :: total_fr,ave_fr     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
- INTEGER :: cnt_grd		! grid cell count
+ INTEGER :: cnt_grd        ! grid cell count
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -650,11 +603,10 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
     
-!---kac
 
- cnt_grd = 0								!KAC Added
- ave_fr  = 0.								!KAC Added
- total_fr= 0.								!KAC Added
+ cnt_grd = 0                                !KAC Added
+ ave_fr  = 0.                                !KAC Added
+ total_fr= 0.                                !KAC Added
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
  IF ( maxval(cellcount_kac(kps:kpe)) .eq. 0 ) RETURN
@@ -665,7 +617,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -685,15 +637,15 @@ CALL wrf_debug ( 0,message )
  DO j = jps,jpe
     DO k = kps,kpe
        DO i = ips,ipe
-          if (t(i,k,j) .lt. 273.15-5.) then		!temp lt -5C=268.15K
-	     if (w(i,k,j) .gt. 5.) then
-	        up_5ms = up_5ms + dx * dy * dz(k)
-		
-		! Grid cell count meeting criteria			!KAC Added
-		cnt_grd = cnt_grd + 1
-		
-	     endif
-	  endif
+          if (t(i,k,j) .lt. 273.15-5.) then        !temp lt -5C=268.15K
+         if (w(i,k,j) .gt. 5.) then
+            up_5ms = up_5ms + dx * dy * dz(k)
+        
+        ! Grid cell count meeting criteria            !KAC Added
+        cnt_grd = cnt_grd + 1
+        
+         endif
+      endif
        END DO
     END DO
  END DO
@@ -703,9 +655,9 @@ CALL wrf_debug ( 0,message )
    up_5ms = wrf_dm_sum_real(up_5ms)
  ENDIF
 
- IF ( cnt_grd .gt. 0 ) THEN						!KAC Added
+ IF ( cnt_grd .gt. 0 ) THEN                        !KAC Added
    total_fr = 6.75e-11 * up_5ms - 13.9
- ENDIF									!KAC Added
+ ENDIF                                    !KAC Added
  
  ! KAC 8/8/16: Given the above equation, total_fr can be (-13.9) if there are no grid cells meeting the
  ! criteria for updraft vol, which means up_5ms=0 in above equation. If up_5ms=0, need total_fr=0. The
@@ -736,11 +688,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN			!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN            !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE									!KAC Added
-   ave_fr = 0.								!KAC Added
- ENDIF									!KAC Added
+ ELSE                                    !KAC Added
+   ave_fr = 0.                                !KAC Added
+ ENDIF                                    !KAC Added
  
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -760,17 +712,13 @@ CALL wrf_debug ( 0,message )
  !ICE WATER PATH
  SUBROUTINE ltng_crm_iwp ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
-                            rho,				  &
-			    refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+                            rho,                  &
+                refl, reflthreshold, cellcount,       &
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -778,13 +726,11 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qs, qg, qi,			          &
-			  !+++kac
-			  ! New variables
-			    qv, qr, nr, ns, ng                    &
-			  !---kac
-			  )
+              ! Moisture variables
+                qs, qg, qi,                      &
+              ! New variables
+                qv, qr, nr, ns, ng                    &
+              )
 !-----------------------------------------------------------------
 ! Framework
  USE module_state_description
@@ -799,28 +745,22 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    :: dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi	!snow, grauple, ice mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi    !snow, grauple, ice mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
  REAL, DIMENSION( ims:ime, kms:kme, jms:jme )                   :: qs_k, qg_k, qi_k, qr_k, nr_k, ns_k, ng_k
  REAL, DIMENSION(          kps:kpe          )                   :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL, DIMENSION(          kps:kpe          )                   :: nr1d,ns1d,ng1d
  REAL, DIMENSION(          kps:kpe          )                   :: dBZ
-!---kac 
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -837,9 +777,9 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: qice							
- REAL :: iwp          						! ice water path (kg m-2)
- REAL :: total_fd,total_fr,ave_fr 				! cloud flash rate
+ REAL :: qice                            
+ REAL :: iwp                                  ! ice water path (kg m-2)
+ REAL :: total_fd,total_fr,ave_fr                 ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
@@ -847,15 +787,12 @@ CALL wrf_debug ( 0,message )
  INTEGER, DIMENSION( ips:ipe,jps:jpe ) :: flag
  REAL :: count
  CHARACTER (LEN=250) :: message
- REAL :: grid_res_P05, patch_area, grid_area			! variables for converting flash density
- !+++kac
+ REAL :: grid_res_P05, patch_area, grid_area            ! variables for converting flash density
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
- !---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -875,11 +812,11 @@ CALL wrf_debug ( 0,message )
       WHERE ((z(i,:,j)-ht(i,j)) .gt. 11000. .and. (z(i,:,j)-ht(i,j)) .le. 13000.)
            qs_k(i,:,j) = qs(i,:,j) * 1.72
            ns_k(i,:,j) = ns(i,:,j) * 1.72
-	   qi_k(i,:,j) = qi(i,:,j) * 1.72
+       qi_k(i,:,j) = qi(i,:,j) * 1.72
       ELSEWHERE
            qs_k(i,:,j) = qs(i,:,j) * 0.77
            ns_k(i,:,j) = ns(i,:,j) * 0.77
-	   qi_k(i,:,j) = qi(i,:,j) * 0.77
+       qi_k(i,:,j) = qi(i,:,j) * 0.77
       END WHERE
       
       !Rain is ~70% too large, so reduce below 7.2km
@@ -914,14 +851,14 @@ CALL wrf_debug ( 0,message )
                kms,kme,dt,i,j)
    
 
-	 
-   !Call refl10cm_hm		 
+     
+   !Call refl10cm_hm         
    call refl_kac(qv1d,qr1d,nr1d,qs1d,ns1d,qg1d,ng1d,&
                t1d,p1d,dBZ,kps,kpe,i,j)
-	       
+           
    do k = kps, kpe
       refl10cm_kac(i,k,j) = MAX(-35., dBZ(k))
-   enddo	  
+   enddo      
 
  end do
  end do
@@ -937,11 +874,10 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
- total_fd = 0.							!KAC Added
- total_fr = 0.							!KAC Added
- ave_fr   = 0.							!KAC Added
+ total_fd = 0.                            !KAC Added
+ total_fr = 0.                            !KAC Added
+ ave_fr   = 0.                            !KAC Added
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
  IF ( maxval(cellcount_kac(kps:kpe)) .eq. 0 ) RETURN
@@ -953,7 +889,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -981,9 +917,9 @@ CALL wrf_debug ( 0,message )
     
         ! Compute total ice mass
          !IF (t(i,k,j) .lt. 263.15 .and. refl10cm_kac(i,k,j) .gt. 18.) THEN
-	 IF (t(i,k,j) .lt. 263.15 .and. refl10cm_kac(i,k,j) .gt. 25.) THEN
+     IF (t(i,k,j) .lt. 263.15 .and. refl10cm_kac(i,k,j) .gt. 25.) THEN
           qice = qice + (qs_k(i,k,j) + qi_k(i,k,j) + qg_k(i,k,j)) * rho(i,k,j) * dx * dy * dz(k)
-	  flag(i,j) = flag(i,j) + 1
+      flag(i,j) = flag(i,j) + 1
          ENDIF
  
    END DO
@@ -1011,8 +947,8 @@ CALL wrf_debug ( 0,message )
  total_fd = 33.33 * iwp - 0.17
  
 ! Convert units to flashes/minute (flash density to flash rate)
- !grid_res_P05 = (50.*50.)						! km2; reps est of grid res used by P05 (0.5x0.5deg)
- patch_area = (dx*((ipe-ips)+1)) * (dy*((jpe-jps)+1)) * 1.e-6		! convert from m2 to km2; area of processor/tile
+ !grid_res_P05 = (50.*50.)                        ! km2; reps est of grid res used by P05 (0.5x0.5deg)
+ patch_area = (dx*((ipe-ips)+1)) * (dy*((jpe-jps)+1)) * 1.e-6        ! convert from m2 to km2; area of processor/tile
  
  total_fr = total_fd * patch_area / 1440.
 
@@ -1051,11 +987,11 @@ CALL wrf_debug ( 0,message )
 
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added this line
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added this line
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added this line
-   ave_fr = 0.							!KAC Added this line
- ENDIF								!KAC Added this line
+ ELSE                                !KAC Added this line
+   ave_fr = 0.                            !KAC Added this line
+ ENDIF                                !KAC Added this line
  
  
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
@@ -1068,33 +1004,27 @@ CALL wrf_debug ( 0,message )
 !PRECIPITATION ICE MASS
  SUBROUTINE ltng_crm_pim ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
-                            rho,				  &
-			    w, refl, reflthreshold, cellcount,    &
-			  ! Scheme specific namelist inputs
+                            rho,                  &
+                w, refl, reflthreshold, cellcount,    &
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
                             ims, ime, jms, jme, kms, kme,         &
                             ips, ipe, jps, jpe, kps, kpe,         &
-			  ! Fallspeed for snow
-			    vts_morr,                             &
+              ! Fallspeed for snow
+                vts_morr,                             &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qs, qg,				  &
-			  !+++kac
-			  ! New variables
-			    qv, qr, nr, ns, ng                    &
-			  !---kac
-			  )
+              ! Moisture variables
+                qs, qg,                  &
+              ! New variables
+                qv, qr, nr, ns, ng                    &
+              )
 !-----------------------------------------------------------------
 ! Framework
  USE module_state_description
@@ -1109,29 +1039,23 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg	!snow, grauple mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg    !snow, grauple mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -1151,22 +1075,19 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: vts_morr
 
 ! Local variables
- REAL :: qs_p_mass, qg_mass					! precip snow mass and graupel							
- REAL :: precip_ice_mass					! precip ice mass (kg)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: qs_p_mass, qg_mass                    ! precip snow mass and graupel                            
+ REAL :: precip_ice_mass                    ! precip ice mass (kg)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -1244,10 +1165,9 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
- total_fr = 0.							!KAC Added
- ave_fr   = 0.							!KAC Added
+ total_fr = 0.                            !KAC Added
+ ave_fr   = 0.                            !KAC Added
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
  IF ( maxval(cellcount_kac(kps:kpe)) .eq. 0 ) RETURN
@@ -1259,7 +1179,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -1288,22 +1208,20 @@ CALL wrf_debug ( 0,message )
          IF (t(i,k,j) .lt. 268.15) THEN
 
             ! Compute precipitation snow mass
-	    ! +++kac - Changed snow threshold to Conrad's 0.00025 kg kg-1
             ! IF (qs(i,k,j) .gt. 1.0e-12) THEN
-	     IF (qs_k(i,k,j) .gt. 0.00025) THEN
+         IF (qs_k(i,k,j) .gt. 0.00025) THEN
               IF (w(i,k,j) .lt. vts_morr(i,k,j)) THEN
-	          qs_p_mass = qs_p_mass + qs_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+              qs_p_mass = qs_p_mass + qs_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
               ENDIF
              ENDIF
-	
-	    ! Compute graupel mass
-	    ! +++kac - changed qg threshold from 1.e-12 to Conrad's 0.0005 kg kg-1
+    
+        ! Compute graupel mass
             ! IF (qg(i,k,j) .gt. 1.0e-12) THEN
-	     IF (qg_k(i,k,j) .gt. 0.00050) THEN
-	         qg_mass = qg_mass + qg_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+         IF (qg_k(i,k,j) .gt. 0.00050) THEN
+             qg_mass = qg_mass + qg_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
              ENDIF
-	     
-	 ENDIF
+         
+     ENDIF
 
    END DO
   END DO
@@ -1349,11 +1267,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
  
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -1373,32 +1291,26 @@ CALL wrf_debug ( 0,message )
 !ICE MASS FLUX PRODUCT
  SUBROUTINE ltng_crm_imfp ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
-                            rho,				  &
-			    w, refl, reflthreshold, cellcount,    &
-			  ! Scheme specific namelist inputs
+                            rho,                  &
+                w, refl, reflthreshold, cellcount,    &
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
                             ims, ime, jms, jme, kms, kme,         &
                             ips, ipe, jps, jpe, kps, kpe,         &
-			  ! Fallspeed for snow & graupel
-			    vts_morr, vtg_morr,                   &
+              ! Fallspeed for snow & graupel
+                vts_morr, vtg_morr,                   &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qs, qg, qi,				  &
-			  !+++kac
-			    qv, qr, nr, ns, ng                    &
-			  !---kac
-			  )
+              ! Moisture variables
+                qs, qg, qi,                  &
+                qv, qr, nr, ns, ng                    &
+              )
 !-----------------------------------------------------------------
 ! Framework
  USE module_state_description
@@ -1416,26 +1328,21 @@ CALL wrf_debug ( 0,message )
 !++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho			!kg/m3
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi		!snow, graupel, ice mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho            !kg/m3
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi        !snow, graupel, ice mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qi_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -1455,22 +1362,19 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: vts_morr, vtg_morr
 
 ! Local variables
- REAL :: wqi, wqs_np, wqs_p, wqg				
- REAL :: flux_prod          					! flux product (kg2 m s-2)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: wqi, wqs_np, wqs_p, wqg                
+ REAL :: flux_prod                              ! flux product (kg2 m s-2)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -1490,11 +1394,11 @@ CALL wrf_debug ( 0,message )
       WHERE ((z(i,:,j)-ht(i,j)) .gt. 11000. .and. (z(i,:,j)-ht(i,j)) .le. 13000.)
            qs_k(i,:,j) = qs(i,:,j) * 1.72
            ns_k(i,:,j) = ns(i,:,j) * 1.72
-	   qi_k(i,:,j) = qi(i,:,j) * 1.72
+       qi_k(i,:,j) = qi(i,:,j) * 1.72
       ELSEWHERE
            qs_k(i,:,j) = qs(i,:,j) * 0.77
            ns_k(i,:,j) = ns(i,:,j) * 0.77
-	   qi_k(i,:,j) = qi(i,:,j) * 0.77
+       qi_k(i,:,j) = qi(i,:,j) * 0.77
       END WHERE
       
       !Rain is ~70% too large, so reduce below 7.2km
@@ -1550,10 +1454,9 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
-total_fr = 0.							!KAC Added
-ave_fr   = 0.							!KAC Added
+total_fr = 0.                            !KAC Added
+ave_fr   = 0.                            !KAC Added
 total_flashrate( ips:ipe,jps:jpe ) = 0.
 
  IF ( maxval(cellcount_kac(kps:kpe)) .eq. 0 ) RETURN
@@ -1565,7 +1468,7 @@ total_flashrate( ips:ipe,jps:jpe ) = 0.
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -1597,27 +1500,25 @@ total_flashrate( ips:ipe,jps:jpe ) = 0.
     
         ! Compute ice crystal mass (units: kg/s)
          IF (w(i,k,j) .gt. 0.) THEN
-	          wqi = wqi + w(i,k,j) * qi_k(i,k,j) * rho(i,k,j) * dx * dy
+              wqi = wqi + w(i,k,j) * qi_k(i,k,j) * rho(i,k,j) * dx * dy
          ENDIF
-	
-	! Compute variable mass fluxes needed for FRPS
-	 
-	 	! Compute precipitation (units: kg m/s) and non-precipitation (units: kg/s) snow mass fluxes
-		! +++kac - Changed snow threshold from 1.0e-12 to Conrad's 0.00025 kg kg-1
-		 IF (qs_k(i,k,j) .gt. 0.00025) THEN
-	      	  IF (w(i,k,j) .gt. vts_morr(i,k,j)) THEN
-		      wqs_np = wqs_np + (w(i,k,j) - vts_morr(i,k,j)) * qs_k(i,k,j) * rho(i,k,j) * dx * dy
-		  ENDIF
-		  IF (w(i,k,j) .lt. vts_morr(i,k,j)) THEN
-		      wqs_p = wqs_p + (w(i,k,j) - vts_morr(i,k,j)) * qs_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
-		  ENDIF
-         	 ENDIF
-		 
-		 ! Compute graupel mass flux (units: kg m/s)
-		 ! +++kac - Changed graupel threshold from 1.e-12 to Conrad's 0.00050 kg kg-1
-		 IF (qg_k(i,k,j) .gt. 0.00050) THEN
-		     wqg = wqg + (w(i,k,j) - vtg_morr(i,k,j)) * qg_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
-		 ENDIF
+    
+    ! Compute variable mass fluxes needed for FRPS
+     
+         ! Compute precipitation (units: kg m/s) and non-precipitation (units: kg/s) snow mass fluxes
+         IF (qs_k(i,k,j) .gt. 0.00025) THEN
+                IF (w(i,k,j) .gt. vts_morr(i,k,j)) THEN
+              wqs_np = wqs_np + (w(i,k,j) - vts_morr(i,k,j)) * qs_k(i,k,j) * rho(i,k,j) * dx * dy
+          ENDIF
+          IF (w(i,k,j) .lt. vts_morr(i,k,j)) THEN
+              wqs_p = wqs_p + (w(i,k,j) - vts_morr(i,k,j)) * qs_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+          ENDIF
+              ENDIF
+         
+         ! Compute graupel mass flux (units: kg m/s)
+         IF (qg_k(i,k,j) .gt. 0.00050) THEN
+             wqg = wqg + (w(i,k,j) - vtg_morr(i,k,j)) * qg_k(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+         ENDIF
  
     ENDIF
  
@@ -1667,11 +1568,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
  
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -1682,17 +1583,13 @@ CALL wrf_debug ( 0,message )
  
 !CSU GRAUPEL ECHO VOLUME
  SUBROUTINE ltng_crm_csugev ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -1700,14 +1597,12 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qg,					  &
-			  !+++kac
-			  ! New variables
-			    qs,                                   &
-			    qv,qr,nr,ns,ng                        &
-			  !---kac
-			  )
+              ! Moisture variables
+                qg,                      &
+              ! New variables
+                qs,                                   &
+                qv,qr,nr,ns,ng                        &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -1723,20 +1618,16 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg		!grauple mixing ratios
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
 !++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, nr, ns, ng
@@ -1744,7 +1635,6 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -1761,21 +1651,18 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: graup_echo    						! graupel echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: graup_echo                            ! graupel echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -1853,7 +1740,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
     
-!---kac
  
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -1866,7 +1752,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -1889,11 +1775,10 @@ CALL wrf_debug ( 0,message )
        DO i = ips,ipe
        
           !temp lt -5C=268.15K, temp lt -40C=233.15K, refl gt 35dBZ; Convert m3 to km3
-	  ! +++kac - changed qg from (gt 0kg/kg) to (ge 0.0005kg/kg)
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. refl10cm_kac(i,k,j) .gt. 35. .and. qg_k(i,k,j) .gt. 0.0005) then
-	     graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -1928,11 +1813,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -1943,17 +1828,13 @@ CALL wrf_debug ( 0,message )
  
  !CSU 35-dBZ ECHO VOLUME
  SUBROUTINE ltng_crm_csu35ev ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -1961,11 +1842,9 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
-			  )
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -1981,26 +1860,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg,qs,qv,qr,nr,ns,ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ 
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -2017,21 +1890,18 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: tf_echo    						! 35-dBZ echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: tf_echo                            ! 35-dBZ echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -2109,7 +1979,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
     
-!---kac
  
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -2122,7 +1991,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -2146,9 +2015,9 @@ CALL wrf_debug ( 0,message )
        
           !temp lt -5C=268.15K, temp lt -40C=233.15K; Convert m3 to km3
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. refl10cm_kac(i,k,j) .gt. 35.) then
-	     tf_echo = tf_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         tf_echo = tf_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -2183,11 +2052,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -2198,17 +2067,13 @@ CALL wrf_debug ( 0,message )
  
 !CSU PRECIPITATION ICE MASS
  SUBROUTINE ltng_crm_csupim ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -2216,11 +2081,9 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
-			  )
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -2236,26 +2099,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg, qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -2269,25 +2126,22 @@ CALL wrf_debug ( 0,message )
  INTEGER, INTENT(IN   )    ::       ips,ipe, jps,jpe, kps,kpe
 
 ! Mandatory outputs for all quantitative schemes
- REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate	!flashes/sec
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate    !flashes/sec
 
 ! Local variables
- REAL :: dbz_to_z, hail_mass, graup_mass, total_mass		! refl (mm^6/m^3), hail, graupel and total mass (g/m^3)
- REAL :: precip_ice_mass					! precipitation ice mass (kg)
- REAL :: total_fr,ave_fr 					! cloud flash rate (flashes/min)
+ REAL :: dbz_to_z, hail_mass, graup_mass, total_mass        ! refl (mm^6/m^3), hail, graupel and total mass (g/m^3)
+ REAL :: precip_ice_mass                    ! precipitation ice mass (kg)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate (flashes/min)
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -2365,7 +2219,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -2378,7 +2231,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -2402,22 +2255,22 @@ CALL wrf_debug ( 0,message )
        
           !temp lt -5C=268.15K, temp lt -40C=233.15K, refl gt 35dBZ
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. refl10cm_kac(i,k,j) .gt. 35. .and. qg_k(i,k,j) .gt. 0.0005) then
-	  
-	     ! Convert reflectivity from dBZ to mm^6 / m^3
-	     dbz_to_z = 10.**(refl10cm_kac(i,k,j) / 10.)
-	     
-	     ! Convert (mm^6/m^3) to g/m^3
-	     ! This simulation uses Morrison 2-moment MP and selects graupel over hail, so ignoring hail here.
-	     !hail_mass  = (4.4 * (10.**(-5.))) * dbz_to_z**0.71
-	     graup_mass = (5.2 * (10.**(-3.))) * dbz_to_z**0.5
-	     !total_mass = hail_mass + graup_mass
-	     total_mass = graup_mass
-	     
-	     ! Multiply by grid volume and convert from g to kg	     
-	     precip_ice_mass = precip_ice_mass + (total_mass * dx * dy * dz(k) * 1.e-3)
-	     
-	  endif
-	  
+      
+         ! Convert reflectivity from dBZ to mm^6 / m^3
+         dbz_to_z = 10.**(refl10cm_kac(i,k,j) / 10.)
+         
+         ! Convert (mm^6/m^3) to g/m^3
+         ! This simulation uses Morrison 2-moment MP and selects graupel over hail, so ignoring hail here.
+         !hail_mass  = (4.4 * (10.**(-5.))) * dbz_to_z**0.71
+         graup_mass = (5.2 * (10.**(-3.))) * dbz_to_z**0.5
+         !total_mass = hail_mass + graup_mass
+         total_mass = graup_mass
+         
+         ! Multiply by grid volume and convert from g to kg         
+         precip_ice_mass = precip_ice_mass + (total_mass * dx * dy * dz(k) * 1.e-3)
+         
+      endif
+      
        END DO
     END DO
  END DO
@@ -2452,11 +2305,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -2467,17 +2320,13 @@ CALL wrf_debug ( 0,message )
  
 ! AL GRAUPEL ECHO VOLUME (T=-10C)
 SUBROUTINE ltng_crm_algev10 ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -2485,14 +2334,12 @@ SUBROUTINE ltng_crm_algev10 ( &
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qg,					  &
-			  !+++kac
-			  ! New variables
-			    qs,                                   &
-			    qv,qr,nr,ns,ng                        &
-			  !---kac
-			   )
+              ! Moisture variables
+                qg,                      &
+              ! New variables
+                qs,                                   &
+                qv,qr,nr,ns,ng                        &
+               )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -2508,27 +2355,21 @@ SUBROUTINE ltng_crm_algev10 ( &
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg		!grauple mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -2545,21 +2386,18 @@ SUBROUTINE ltng_crm_algev10 ( &
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: graup_echo    						! graupel echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: graup_echo                            ! graupel echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -2637,7 +2475,6 @@ SUBROUTINE ltng_crm_algev10 ( &
           ! Outputs
             cellcount_kac )
 
-!---kac
  
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -2650,7 +2487,7 @@ SUBROUTINE ltng_crm_algev10 ( &
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -2673,11 +2510,10 @@ SUBROUTINE ltng_crm_algev10 ( &
        DO i = ips,ipe
        
           !temp lt -10C=263.15K, temp gt -40C=233.15K; Convert m3 to km3
-	  ! +++kac - changed qg from (gt 0kg/kg) to (ge 0.0005kg/kg)
           if (t(i,k,j) .lt. 263.15 .and. t(i,k,j) .gt. 233.15 .and. qg_k(i,k,j) .gt. 0.0005) then
-	     graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -2712,11 +2548,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -2727,17 +2563,13 @@ CALL wrf_debug ( 0,message )
  
 ! AL GRAUPEL ECHO VOLUME (T=-5C)
 SUBROUTINE ltng_crm_algev5 ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -2745,14 +2577,12 @@ SUBROUTINE ltng_crm_algev5 ( &
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qg,					  &
-			  !+++kac
-			  ! New variables
-			    qs,                                   &
-			    qv,qr,nr,ns,ng                        &
-			  !---kac
-			  )
+              ! Moisture variables
+                qg,                      &
+              ! New variables
+                qs,                                   &
+                qv,qr,nr,ns,ng                        &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -2768,27 +2598,21 @@ SUBROUTINE ltng_crm_algev5 ( &
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg		!grauple mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -2805,21 +2629,18 @@ SUBROUTINE ltng_crm_algev5 ( &
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: graup_echo    						! graupel echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: graup_echo                            ! graupel echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -2897,7 +2718,6 @@ SUBROUTINE ltng_crm_algev5 ( &
           ! Outputs
             cellcount_kac )
 
-!---kac
  
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -2910,7 +2730,7 @@ SUBROUTINE ltng_crm_algev5 ( &
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -2933,11 +2753,10 @@ SUBROUTINE ltng_crm_algev5 ( &
        DO i = ips,ipe
        
           !temp lt -5C=268.15K, temp gt -40C=233.15K; Convert m3 to km3
-	  ! +++kac - changed qg from (gt 0kg/kg) to (ge 0.0005kg/kg)
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. qg_k(i,k,j) .gt. 0.0005) then
-	     graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -2972,11 +2791,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -2988,13 +2807,9 @@ CALL wrf_debug ( 0,message )
 ! AL UPDRAFT ECHO VOLUME (W>5m/s, T==10C)
  SUBROUTINE ltng_crm_alup510 ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             w, refl, reflthreshold, cellcount,    &
                           ! Scheme specific namelist inputs
@@ -3005,10 +2820,8 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -3024,26 +2837,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg, qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
@@ -3061,21 +2868,18 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: up510          	! upvol (km3)
- REAL :: total_fr,ave_fr 	! cloud flash rate
+ REAL :: up510              ! upvol (km3)
+ REAL :: total_fr,ave_fr     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -3153,7 +2957,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -3165,7 +2968,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -3188,12 +2991,12 @@ CALL wrf_debug ( 0,message )
        
           !temp lt -10C=263.15K, temp gt -40C=233.15K, updraft vel gt 5m/s
           if (t(i,k,j) .lt. 263.15 .and. t(i,k,j) .gt. 233.15 .and. w(i,k,j) .gt. 5.) then
-	     
-	        ! Convert m3 to km3
-	        up510 = up510 + dx * dy * dz(k) * 1.e-9
-	     
-	  endif
-	  
+         
+            ! Convert m3 to km3
+            up510 = up510 + dx * dy * dz(k) * 1.e-9
+         
+      endif
+      
        END DO
     END DO
  END DO
@@ -3229,11 +3032,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -3244,17 +3047,13 @@ CALL wrf_debug ( 0,message )
  
 ! AL SUPERCELL GRAUPEL ECHO VOLUME (T=-10C)
 SUBROUTINE ltng_crm_alsupcellgev10 ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -3262,13 +3061,11 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qg,					  &
-			  !+++kac
-			  ! New variables
-			    qs,qv,qr,nr,ns,ng                     &
-			  !---kac
-			  )
+              ! Moisture variables
+                qg,                      &
+              ! New variables
+                qs,qv,qr,nr,ns,ng                     &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -3284,27 +3081,21 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg		!grauple mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -3321,21 +3112,18 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: graup_echo    						! graupel echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: graup_echo                            ! graupel echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -3413,7 +3201,6 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -3426,7 +3213,7 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -3449,11 +3236,10 @@ SUBROUTINE ltng_crm_alsupcellgev10 ( &
        DO i = ips,ipe
        
           !temp lt -10C=263.15K, temp gt -40C=233.15K; Convert m3 to km3
-	  ! +++kac - changed qg from (gt 0kg/kg) to (ge 0.0005kg/kg)
           if (t(i,k,j) .lt. 263.15 .and. t(i,k,j) .gt. 233.15 .and. qg_k(i,k,j) .gt. 0.0005) then
-	     graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -3488,11 +3274,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -3503,17 +3289,13 @@ CALL wrf_debug ( 0,message )
  
 ! AL SUPERCELL GRAUPEL ECHO VOLUME (T=-5C)
 SUBROUTINE ltng_crm_alsupcellgev5 ( &
- 			  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+               ! Frequently used prognostics
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -3521,13 +3303,11 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qg,					  &
-			  !+++kac
-			  ! New variables
-			    qs,qv,qr,nr,ns,ng                     &
-			  !---kac
-			  )
+              ! Moisture variables
+                qg,                      &
+              ! New variables
+                qs,qv,qr,nr,ns,ng                     &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -3543,27 +3323,21 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg		!grauple mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg        !grauple mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -3580,21 +3354,18 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: graup_echo    						! graupel echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: graup_echo                            ! graupel echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -3672,7 +3443,6 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -3685,7 +3455,7 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -3708,11 +3478,10 @@ SUBROUTINE ltng_crm_alsupcellgev5 ( &
        DO i = ips,ipe
        
           !temp lt -5C=268.15K, temp gt -40C=233.15K; Convert m3 to km3
-	  ! +++kac - changed qg threshold from (gt 0kg/kg) to (ge 0.0005kg/kg)
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. qg_k(i,k,j) .gt. 0.0005) then
-	     graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
-	  endif
-	  
+         graup_echo = graup_echo + dx * dy * dz(k) * 1.e-9
+      endif
+      
        END DO
     END DO
  END DO
@@ -3747,11 +3516,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -3763,13 +3532,9 @@ CALL wrf_debug ( 0,message )
 ! AL SUPERCELL UPDRAFT ECHO VOLUME (W>5m/s, T==10C)
  SUBROUTINE ltng_crm_alsupcellup510 ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             w, refl, reflthreshold, cellcount,    &
                           ! Scheme specific namelist inputs
@@ -3780,10 +3545,8 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -3799,26 +3562,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg, qs, qv, qr, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
@@ -3836,21 +3593,18 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: up510          	! upvol (km3)
- REAL :: total_fr,ave_fr 	! cloud flash rate
+ REAL :: up510              ! upvol (km3)
+ REAL :: total_fr,ave_fr     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -3928,7 +3682,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -3940,7 +3693,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -3963,12 +3716,12 @@ CALL wrf_debug ( 0,message )
        
           !temp lt -10C=263.15K, temp gt -40C=233.15K, updraft vel gt 5m/s
           if (t(i,k,j) .lt. 263.15 .and. t(i,k,j) .gt. 233.15 .and. w(i,k,j) .gt. 5.) then
-	     
-	        ! Convert m3 to km3
-	        up510 = up510 + dx * dy * dz(k) * 1.e-9
-		
-	  endif
-	  
+         
+            ! Convert m3 to km3
+            up510 = up510 + dx * dy * dz(k) * 1.e-9
+        
+      endif
+      
        END DO
     END DO
  END DO
@@ -4004,11 +3757,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
  
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -4020,30 +3773,26 @@ CALL wrf_debug ( 0,message )
 ! FINNEY UPWARD CLOUD ICE FLUX
  SUBROUTINE ltng_crm_iceflux ( &
                           ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t, pres,        &
                           ! Scheme specific prognostics
-                            rho,				  &
-			    w, refl, reflthreshold, cellcount,    &
-			  ! Scheme specific namelist inputs
+                            rho,                  &
+                w, refl, reflthreshold, cellcount,    &
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
                             ims, ime, jms, jme, kms, kme,         &
                             ips, ipe, jps, jpe, kps, kpe,         &
-			  ! Fallspeed for snow and graupel
-			    vts_morr, vtg_morr,			  &
+              ! Fallspeed for snow and graupel
+                vts_morr, vtg_morr,              &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  ! Moisture variables
-			    qs, qg, qi, qc, qr,			  &
-			  !+++kac
-			  ! New variables
-			    qv,nr,ns,ng                           &
-			  !---kac
-			  )
+              ! Moisture variables
+                qs, qg, qi, qc, qr,              &
+              ! New variables
+                qv,nr,ns,ng                           &
+              )
 !-----------------------------------------------------------------
 ! Framework
  USE module_state_description
@@ -4058,26 +3807,22 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t, pres		!pressure (Pa)
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t, pres        !pressure (Pa)
 
 ! Scheme specific prognostics
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho			!kg/m3
- REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi, qc, qr	!snow, graupel, ice, cloud water, rain water mixing ratios
-!+++kac
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: rho            !kg/m3
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qs, qg, qi, qc, qr    !snow, graupel, ice, cloud water, rain water mixing ratios
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, nr, ns, ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qi_k, qr_k, nr_k, ns_k, ng_k, qc_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ      
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -4100,24 +3845,21 @@ CALL wrf_debug ( 0,message )
  REAL, DIMENSION (kps:kpe) :: tmp_plevel
  REAL :: plevel
  INTEGER :: k_plevel
- REAL :: frac_cld						! fractional cloud cover at 44hPa (m2 [cloud] m-2 [cell])			
- REAL :: up_cld_iceflux          				! upward cloud ice flux at 440hPa (kg [ice] m-2 [cloud] s-1)
- REAL :: total_fr						! total flash (flash s-1)
+ REAL :: frac_cld                        ! fractional cloud cover at 44hPa (m2 [cloud] m-2 [cell])            
+ REAL :: up_cld_iceflux                          ! upward cloud ice flux at 440hPa (kg [ice] m-2 [cloud] s-1)
+ REAL :: total_fr                        ! total flash (flash s-1)
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
  
- REAL, PARAMETER :: cldfra_thresh = 1.e-5			! This threshold is equivalent to 0.01 g/kg and is used with qtot
+ REAL, PARAMETER :: cldfra_thresh = 1.e-5            ! This threshold is equivalent to 0.01 g/kg and is used with qtot
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -4137,11 +3879,11 @@ CALL wrf_debug ( 0,message )
       WHERE ((z(i,:,j)-ht(i,j)) .gt. 11000. .and. (z(i,:,j)-ht(i,j)) .le. 13000.)
            qs_k(i,:,j) = qs(i,:,j) * 1.72
            ns_k(i,:,j) = ns(i,:,j) * 1.72
-	   qi_k(i,:,j) = qi(i,:,j) * 1.72
+       qi_k(i,:,j) = qi(i,:,j) * 1.72
       ELSEWHERE
            qs_k(i,:,j) = qs(i,:,j) * 0.77
            ns_k(i,:,j) = ns(i,:,j) * 0.77
-	   qi_k(i,:,j) = qi(i,:,j) * 0.77
+       qi_k(i,:,j) = qi(i,:,j) * 0.77
       END WHERE
       
       !Rain is ~70% too large, so reduce below 7.2km
@@ -4197,7 +3939,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
 
-!---kac
 
  total_flashrate( ips:ipe,jps:jpe ) = 0.
 
@@ -4242,41 +3983,41 @@ CALL wrf_debug ( 0,message )
    ENDDO
 
   
-  ! Calculate the fractional cloud cover (Qtot) 				! units: m2 [cloud] m-2 [cell])
+  ! Calculate the fractional cloud cover (Qtot)                 ! units: m2 [cloud] m-2 [cell])
    frac_cld = qc_k(i,k_plevel,j) + qi_k(i,k_plevel,j) + qs_k(i,k_plevel,j) + qg_k(i,k_plevel,j) + qr_k(i,k_plevel,j)
 
         ! CLOUD IS PRESENT
          IF (frac_cld .gt. cldfra_thresh) THEN
    
-                ! Calculate the specific cloud ice water content at 440 hPa		! units: kg [ice] kg-2 [air]
-		
-		! Non-precipitating snow (qs threshold 0.25g/kg came from Conrad)
-		 IF ( w(i,k_plevel,j) .gt. vts_morr(i,k_plevel,j) .and. qs_k(i,k_plevel,j) .ge. 0.00025 ) THEN
-		   up_cld_iceflux = up_cld_iceflux + qs_k(i,k_plevel,j) * rho(i,k_plevel,j) * ( w(i,k_plevel,j) - vts_morr(i,k_plevel,j) )
-		 ENDIF
-		 
-		! Non-precipitating ice
-		 IF ( w(i,k_plevel,j) .gt. 0. .and. qi_k(i,k_plevel,j) .gt. 0. ) THEN
-   	   	   up_cld_iceflux = up_cld_iceflux + qi_k(i,k_plevel,j) * rho(i,k_plevel,j) * w(i,k_plevel,j)
-		 ENDIF
-	
-	! NO CLOUD AT 440hPa (No cloud=no ice flux)
-  	 ELSE IF (frac_cld .le. cldfra_thresh) THEN
-	 
-	  	! Calculate the upward cloud ice flux				! units: kg [ice] m-2 [cloud] s-1
-	   	 up_cld_iceflux = 0.
-	   
-   	 ENDIF
+                ! Calculate the specific cloud ice water content at 440 hPa        ! units: kg [ice] kg-2 [air]
+        
+        ! Non-precipitating snow (qs threshold 0.25g/kg came from Conrad)
+         IF ( w(i,k_plevel,j) .gt. vts_morr(i,k_plevel,j) .and. qs_k(i,k_plevel,j) .ge. 0.00025 ) THEN
+           up_cld_iceflux = up_cld_iceflux + qs_k(i,k_plevel,j) * rho(i,k_plevel,j) * ( w(i,k_plevel,j) - vts_morr(i,k_plevel,j) )
+         ENDIF
+         
+        ! Non-precipitating ice
+         IF ( w(i,k_plevel,j) .gt. 0. .and. qi_k(i,k_plevel,j) .gt. 0. ) THEN
+                 up_cld_iceflux = up_cld_iceflux + qi_k(i,k_plevel,j) * rho(i,k_plevel,j) * w(i,k_plevel,j)
+         ENDIF
+    
+    ! NO CLOUD AT 440hPa (No cloud=no ice flux)
+       ELSE IF (frac_cld .le. cldfra_thresh) THEN
+     
+          ! Calculate the upward cloud ice flux                ! units: kg [ice] m-2 [cloud] s-1
+            up_cld_iceflux = 0.
+       
+        ENDIF
    
         ! Calculate the flash density over land (units: fl m-2 [cell] s-1) & convert to flash rate with (dx * dy) (units: fl s-1)
          total_fr = 6.58e-7 * up_cld_iceflux * dx * dy
   
 
-  	! Restrict total flashes to within refl > reflthreshold
-   	 IF ( refl10cm_kac(i,k_maxcount,j) .gt. reflthreshold ) THEN
-     	   total_flashrate(i,j) = total_fr
-   	 ENDIF
-	
+      ! Restrict total flashes to within refl > reflthreshold
+        IF ( refl10cm_kac(i,k_maxcount,j) .gt. reflthreshold ) THEN
+            total_flashrate(i,j) = total_fr
+        ENDIF
+    
   ENDDO
  ENDDO
 
@@ -4290,16 +4031,12 @@ CALL wrf_debug ( 0,message )
  !CSU 35-dBZ ECHO VOLUME tailored for 29 May OK storm region
  SUBROUTINE ltng_crm_csu29May ( &
  ! Frequently used prognostics
-			  !+++kac
-			    itimestep, dt,                        &
-			  !---kac
+                itimestep, dt,                        &
                             dx, dy, xland, ht, z, t,              &
-			  !+++kac
-			    pres,                                 &
-			  !---kac
+                pres,                                 &
                           ! Scheme specific prognostics
                             refl, reflthreshold, cellcount,       &
-			  ! Scheme specific namelist inputs
+              ! Scheme specific namelist inputs
                             cellcount_method,                     &
                           ! Order dependent args for domain, mem, and tile dims
                             ids, ide, jds, jde, kds, kde,         &
@@ -4307,11 +4044,9 @@ CALL wrf_debug ( 0,message )
                             ips, ipe, jps, jpe, kps, kpe,         &
                           ! Mandatory output for all quantitative schemes
                             total_flashrate,                      &
-			  !+++kac
-			  ! New variables
-			    qg,qs,qv,qr,nr,ns,ng                  &
-			  !---kac
-			  )
+              ! New variables
+                qg,qs,qv,qr,nr,ns,ng                  &
+              )
  
  !-----------------------------------------------------------------
 ! Framework
@@ -4327,26 +4062,20 @@ CALL wrf_debug ( 0,message )
 !-----------------------------------------------------------------
 
 ! Frequently used prognostics
-!+++kac
  INTEGER, INTENT(IN   )    :: itimestep
  REAL,    INTENT(IN   )    :: dt
-!---kac
  REAL,    INTENT(IN   )    ::       dx, dy
 
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: pres
-!---kac
 
 ! Scheme specific prognostics
-!+++kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qg,qs,qv,qr,nr,ns,ng
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme )                :: qs_k, qg_k, qr_k, nr_k, ns_k, ng_k
  REAL,    DIMENSION(          kps:kpe          )                :: qv1d,qg1d,qr1d,qs1d,t1d,p1d
  REAL,    DIMENSION(          kps:kpe          )                :: nr1d,ns1d,ng1d
  REAL,    DIMENSION(          kps:kpe          )                :: dBZ 
-!---kac
  REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
  REAL,                                            INTENT(IN   ) :: reflthreshold
  REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
@@ -4363,22 +4092,19 @@ CALL wrf_debug ( 0,message )
  REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
 
 ! Local variables
- REAL :: tf_echo    						! 35-dBZ echo vol (km3)
- REAL :: total_fr,ave_fr 					! cloud flash rate
+ REAL :: tf_echo                            ! 35-dBZ echo vol (km3)
+ REAL :: total_fr,ave_fr                     ! cloud flash rate
  INTEGER :: i,k,j
  INTEGER :: k_maxcount
- INTEGER :: cnt_grd						! grid cell count
+ INTEGER :: cnt_grd                        ! grid cell count
  REAL :: maxcount
  REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz
  CHARACTER (LEN=250) :: message
-!+++kac
  REAL, DIMENSION(ims:ime,kms:kme,jms:jme) :: refl10cm_kac
  REAL, DIMENSION(        kms:kme        ) :: cellcount_kac
-!---kac
 
 !-----------------------------------------------------------------
 
-!+++kac
  do i=ips,ipe
  do j=jps,jpe
  
@@ -4456,7 +4182,6 @@ CALL wrf_debug ( 0,message )
           ! Outputs
             cellcount_kac )
     
-!---kac
 
  cnt_grd = 0
  ave_fr = 0.
@@ -4472,7 +4197,7 @@ CALL wrf_debug ( 0,message )
  DO j = jps, jpe
   DO k = kps, kpe
    DO i = ips, ipe
-    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))		!units: m
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))        !units: m
     countz(k) = countz(k) + 1
    END DO
   END DO
@@ -4496,13 +4221,13 @@ CALL wrf_debug ( 0,message )
        
           !temp lt -5C=268.15K, temp lt -40C=233.15K; Convert m3 to km3
           if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and. refl10cm_kac(i,k,j) .gt. 35.) then
-	     tf_echo = tf_echo + dx * dy * dz(k) * 1.e-9
+         tf_echo = tf_echo + dx * dy * dz(k) * 1.e-9
 
-	     ! Grid cell count meeting criteria
-	     cnt_grd = cnt_grd + 1	     
+         ! Grid cell count meeting criteria
+         cnt_grd = cnt_grd + 1         
 
-	  endif
-	  
+      endif
+      
        END DO
     END DO
  END DO
@@ -4543,11 +4268,11 @@ CALL wrf_debug ( 0,message )
  ENDIF
 
 ! Distributing across convective core
- IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN		!KAC Added
+ IF ( total_fr .gt. 0. .and. maxcount .gt. 0.) THEN        !KAC Added
    ave_fr = total_fr/maxcount/60.
- ELSE								!KAC Added
-   ave_fr = 0.							!KAC Added
- ENDIF								!KAC Added
+ ELSE                                !KAC Added
+   ave_fr = 0.                            !KAC Added
+ ENDIF                                !KAC Added
 
  WHERE( refl10cm_kac(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
    total_flashrate(ips:ipe,jps:jpe) = ave_fr
@@ -4639,39 +4364,39 @@ CALL wrf_debug ( 0,message )
    !loop start
         ii=i
         jj=j
-	
-	 
-	 do kk=kps,kpe
-	 
-           es(kk) = 611.2*exp(17.67*(t1d(kk)-273.15)/((t1d(kk)-273.15)+243.5))	!t1d-273.15=C; es=Pa
-	   qsat(kk) = 0.622*es(kk)/p1d(kk)			!es=Pa; p1d=Pa; qsat=kg/kg
-	 
-	  ! Increase model Qv (assuming Qg and Qv aren't too high) because there is a flash
-	   if (lyyx1(ii,jj,im) .gt. 1) then
+    
+     
+     do kk=kps,kpe
+     
+           es(kk) = 611.2*exp(17.67*(t1d(kk)-273.15)/((t1d(kk)-273.15)+243.5))    !t1d-273.15=C; es=Pa
+       qsat(kk) = 0.622*es(kk)/p1d(kk)            !es=Pa; p1d=Pa; qsat=kg/kg
+     
+      ! Increase model Qv (assuming Qg and Qv aren't too high) because there is a flash
+       if (lyyx1(ii,jj,im) .gt. 1) then
 
           ! If Qg >= 3 g/kg no action
-	  ! qg1d=kg/kg
+      ! qg1d=kg/kg
              if (qg1d(kk).lt.0.003) then
-	  ! If ambient Qvapor already >= 95% of env qsat no action
-	  ! qv1d=kg/kg; qsat=kg/kg
-	       if (qv1d(kk).lt.ldarhtd*qsat(kk)) then		
+      ! If ambient Qvapor already >= 95% of env qsat no action
+      ! qv1d=kg/kg; qsat=kg/kg
+           if (qv1d(kk).lt.ldarhtd*qsat(kk)) then        
           ! Increase Qv between ldatmin and ldatmax only
-	  ! t1d=K
-	         if (t1d(kk).lt.ldatmax.and.t1d(kk).gt.ldatmin) then
-	  ! multiply qg1d by 1000 so units are g/kg (not kg/kg) like in Fierro et al. (2012) 
-		     angle(kk)=(1000.*qg1d(kk))**2.2
-		     
-		     ! multiply qsat by 1000. so units are in g/kg like in Fierro et al. (2012); then divide by 1000. to put qv1d into kg/kg
-		     qv1d(kk)=ldaa*qsat(kk)+ldab*qsat(kk)*tanh(ldac*lyyx1(ii,jj,im))*(1-tanh(ldad*angle(kk))) 
-!		     !write(*,*)'qv1d ok1'
-		   if (qv1d(kk)/qsat(kk).gt.ldarhmax) then
-		       qv1d(kk)=ldarhmax*qsat(kk)
-		   endif
-		  ! write(*,*)'qv1d ok2'
-		 endif
-	       endif
-	     endif
-	   ! Dampen the model Qv because there is no observed flash  
+      ! t1d=K
+             if (t1d(kk).lt.ldatmax.and.t1d(kk).gt.ldatmin) then
+      ! multiply qg1d by 1000 so units are g/kg (not kg/kg) like in Fierro et al. (2012) 
+             angle(kk)=(1000.*qg1d(kk))**2.2
+             
+             ! multiply qsat by 1000. so units are in g/kg like in Fierro et al. (2012); then divide by 1000. to put qv1d into kg/kg
+             qv1d(kk)=ldaa*qsat(kk)+ldab*qsat(kk)*tanh(ldac*lyyx1(ii,jj,im))*(1-tanh(ldad*angle(kk))) 
+!             !write(*,*)'qv1d ok1'
+           if (qv1d(kk)/qsat(kk).gt.ldarhmax) then
+               qv1d(kk)=ldarhmax*qsat(kk)
+           endif
+          ! write(*,*)'qv1d ok2'
+         endif
+           endif
+         endif
+       ! Dampen the model Qv because there is no observed flash  
            else if (lyyx1(ii,jj,im).lt.0) then
              if (qv1d(kk).gt.ldarhtd_damp*qsat(kk)) then
                  qv1d(kk)=ldarhtd_damp*qsat(kk)
@@ -4679,10 +4404,10 @@ CALL wrf_debug ( 0,message )
              endif
            else if (lyyx1(ii,jj,im).eq.0) then
                qv1d(kk)=qv1d(kk)
-           endif	!lyyx1
-	     
-	 enddo	!kk loop
-		 
+           endif    !lyyx1
+         
+     enddo    !kk loop
+         
  endif
  
  !CALL refl10cm_hm
@@ -4705,7 +4430,7 @@ CALL wrf_debug ( 0,message )
  !..Sub arguments
  INTEGER, INTENT(IN):: kps, kpe, ii, jj
  REAL, DIMENSION(kps:kpe), INTENT(IN)::                            &
-                      qv1d, qr1d, nr1d, qs1d, ns1d, qg1d, ng1d, t1d, p1d		      
+                      qv1d, qr1d, nr1d, qs1d, ns1d, qg1d, ng1d, t1d, p1d              
  REAL, DIMENSION(kps:kpe), INTENT(INOUT):: dBZ
 
  !..Local variables
@@ -4724,7 +4449,6 @@ CALL wrf_debug ( 0,message )
  INTEGER:: k, k_0, n
  LOGICAL:: melti
  
- !+++kac
  REAL,PARAMETER :: PI = 3.1415926535897932384626434
  !xam_r
  !xcrg(3)
