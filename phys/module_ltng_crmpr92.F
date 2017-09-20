@@ -4,7 +4,7 @@
 ! for resolutions permitting resolved deep convection.
 !
 ! Price, C., and D. Rind (1992), A Simple Lightning Parameterization for Calculating
-!   Global Lightning Distributions, J. Geophys. Res., 97(D9), 9919-9933, doi:10.1029/92JD00719.
+!   Global Lightning Distributions, J. Geophys. Res., 97(D9), 9919–9933, doi:10.1029/92JD00719.
 !
 ! Wong, J., M. Barth, and D. Noone (2012), Evaluating a Lightning Parameterization
 !   at Resolutions with Partially-Resolved Convection, GMDD, in preparation.
@@ -90,7 +90,7 @@
    wmax = wrf_dm_max_real(wmax)
  ENDIF
 
- total_fr = 5.7e-6 * wmax**4.5
+ total_fr = 5.005e-6 * wmax**4.55
 
 ! Locating widest part of convective core
  k_maxcount = kps
@@ -195,7 +195,7 @@
  mostlyland = mostlyland/count
 
  zmax = zmax * 1.e-3
- WRITE(message, * ) ' ltng_crmpr92z: reflectivity cloud top height: ', zmax
+ WRITE(message, * ) ' ltng_crmpr92z: reflectivity cloud top height: ', zmax, count
  CALL wrf_debug ( 15, message )
 
  if ( cellcount_method .eq. 2 ) THEN
@@ -225,7 +225,455 @@
  ENDWHERE
 
  END SUBROUTINE ltng_crmpr92z
+!
+!------------------------------------------------------------------------------
+! Lightning flash rate predictions based on various storm parameters. Used 
+! for resolutions permitting resolved deep convection.
+!
+! Output is flash rate for each parameterization: wmax, cldtop, updraft volume,
+! IWP, precipitating ice mass, 35 dBZ volume, and ice mass flux  
+!
+!
+ SUBROUTINE ltng_crm_flashrates ( &
+                          ! State variables and storm parameters
+                            dx, dy, xland, ht, z, t, pres, rho,   &
+                            w, refl, reflthreshold, cellcount,    &
+                          ! Namelist inputs
+                            cellcount_method,                     &
+                          ! Order dependent args for domain, mem, and tile dims
+                            ids, ide, jds, jde, kds, kde,         &
+                            ims, ime, jms, jme, kms, kme,         &
+                            ips, ipe, jps, jpe, kps, kpe,         &
+                          ! Mandatory output for all quantitative schemes
+                            total_flashrate,                      &
+                            wmax_flashrate,  cldtp_flashrate,     & 
+                            upvol_flashrate, iwp_flashrate,       & 
+                            pim_flashrate,   dbz35_flashrate,     & 
+                            iceflx_flashrate,                     & 
+                            qv, qr, qi, qs, qg                    &
+                          )
+!-----------------------------------------------------------------
+! Framework
+ USE module_state_description
 
+! Model layer
+ USE module_model_constants
+ USE module_wrf_error
+
+ USE module_dm, only: wrf_dm_max_real, wrf_dm_sum_real
+
+ IMPLICIT NONE
+!-----------------------------------------------------------------
+
+! Frequently used prognostics
+ REAL,    INTENT(IN   )    ::       dx, dy
+
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(IN   ) :: xland, ht
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: z, t, pres, rho
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: qv, qr, qi, qs, qg
+
+! Scheme specific prognostics
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: w
+ REAL,    DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN   ) :: refl
+ REAL,                                            INTENT(IN   ) :: reflthreshold
+ REAL,    DIMENSION(          kms:kme          ), INTENT(IN   ) :: cellcount
+
+! Scheme specific namelist inputs
+ INTEGER, INTENT(IN   )    ::       cellcount_method
+
+! Order dependent args for domain, mem, and tile (patch) dims
+ INTEGER, INTENT(IN   )    ::       ids,ide, jds,jde, kds,kde
+ INTEGER, INTENT(IN   )    ::       ims,ime, jms,jme, kms,kme
+ INTEGER, INTENT(IN   )    ::       ips,ipe, jps,jpe, kps,kpe
+
+! Mandatory outputs for all quantitative schemes
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: total_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: wmax_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: cldtp_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: upvol_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: iwp_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: pim_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: dbz35_flashrate
+ REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(  OUT) :: iceflx_flashrate
+
+! Local variables
+ REAL :: wmax            ! max w (m/s) in patch or domain
+ REAL :: zmax            ! cloud top in patch or domain based on reflthreshold value
+ REAL :: up_5ms          ! updraft volume > 5 m/s, upvol (m3)                                           
+ REAL :: qice            ! total ice mass (kg)
+ REAL :: iwp             ! ice water path (kg m-2)
+ REAL :: qs_p_mass       ! precip snow mass 
+ REAL :: qg_mass         ! precip graupel mass 
+ REAL :: precip_ice_mass ! precip ice mass (kg)
+ REAL :: vt_snow         ! fallspeed of snow, based on method in Morrison scheme
+ REAL :: cons3           ! GAMMA(4+BS)/6.
+ REAL :: rho850          ! air density at 850 hPa, 273 K
+ REAL :: asn             ! vts coefficient combined with density correction
+ REAL :: lambdas         ! slope parameter for snow, used in vt_snow calculation
+ REAL :: dbz35           ! volume of 35 dBZ region (km3)
+ REAL :: up_iceflx       ! upward ice flux (kg ice / m2/ s)
+
+ REAL :: total_fr,ave_fr ! cloud flash rate
+ REAL :: wmax_fr         ! flash rate based on wmax (PR92)
+ REAL :: cldtp_fr        ! flash rate based on zmax (PR92)
+ REAL :: upvol_fr        ! flash rate based on upvol (Deierling ....)
+ REAL :: iwp_fd          ! IWP flash density  (Petersen et al., 2005)
+ REAL :: iwp_fr          ! IWP flash rate  
+ REAL :: pim_fr          ! Precipitating Ice Mass flash rate  (Deierling ....)
+ REAL :: dbz35_fr        ! 35 dBZ Volume flash rate  (Basarab et al., 2015, JGR)
+ REAL :: iceflx_fr       ! Upward Ice Flux flash rate  (Finney et al., 2014, ACP)
+
+ REAL :: grid_res_P05, patch_area, grid_area  ! variables for converting flash density
+ INTEGER, DIMENSION( ips:ipe,jps:jpe ) :: flag  ! for IWP calculations
+ INTEGER :: count           ! for IWP and mostlyland calculations
+ INTEGER :: counti          ! grid cell count for iceflx calculation
+ INTEGER :: cnt_grd         ! grid cell count for upvol calculation
+ INTEGER :: k_plevel 
+ REAL, DIMENSION( kps:kpe ) :: tmp_plevel                    ! to get pres level for Finney scheme
+
+ REAL, DIMENSION (kps:kpe) :: sumz, countz, avgz, dz         ! to get dz array
+ INTEGER :: i,k,j
+ INTEGER :: k_maxcount, nxny
+ REAL :: maxcount, mostlyLand
+ REAL, PARAMETER :: pi = 3.1415926535897932384626434
+ CHARACTER (LEN=250) :: message
+
+!-----------------------------------------------------------------
+
+ cnt_grd = 0      
+ ave_fr  = 0.     
+ total_fr= 0.
+ total_flashrate( ips:ipe,jps:jpe ) = 0.
+ wmax_fr  = 0.
+ cldtp_fr = 0.
+ upvol_fr = 0.
+ iwp_fd   = 0.
+ iwp_fr   = 0.
+ pim_fr   = 0.
+ dbz35_fr = 0.
+ iceflx_fr= 0.
+ wmax_flashrate( ips:ipe,jps:jpe )   = 0.
+ cldtp_flashrate( ips:ipe,jps:jpe )  = 0.
+ upvol_flashrate( ips:ipe,jps:jpe )  = 0.
+ iwp_flashrate( ips:ipe,jps:jpe )    = 0.
+ pim_flashrate( ips:ipe,jps:jpe )    = 0.
+ dbz35_flashrate( ips:ipe,jps:jpe )  = 0.
+ iceflx_flashrate( ips:ipe,jps:jpe ) = 0.
+
+ IF ( maxval(cellcount(kps:kpe)) .eq. 0 ) RETURN
+
+! Determine if storm is mostly over land for wmax and cldtp flash rate equations
+ mostlyland = 0.
+ count = 0
+ DO i=ips,ipe
+   DO j=jps,jpe
+     k = kpe
+     do while ( cellcount(k) .eq. 0 .and. k .gt. kps)        ! finds top of storm at each grid cell
+       k = k-1
+     ENDDO
+     IF ( refl(i,k,j) .gt. reflthreshold ) THEN
+      count = count + 1
+      mostlyland = mostlyland + xland(i,j)
+     ENDIF
+   ENDDO
+ ENDDO
+ mostlyland = mostlyland/count                               ! xland = 1 for land,   = 2 for water
+
+
+! Find wmax in patch or domain
+ wmax = maxval(w(ips:ipe,kps:kpe,jps:jpe))
+ IF ( cellcount_method .eq. 2 ) THEN
+   wmax = wrf_dm_max_real(wmax)
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: maximum vertical velocity: ', wmax
+ CALL wrf_debug ( 15, message )
+
+
+! Find cloud top in patch or domain
+ k = kpe
+ do while ( cellcount(k) .eq. 0 .and. k .gt. kps)
+   k = k-1
+ ENDDO
+ zmax = 0.
+ DO i=ips,ipe
+   DO j=jps,jpe
+     IF ( (refl(i,k,j) .gt. reflthreshold) .and. (t(i,k,j) .lt. 273.15) ) THEN
+       IF (z(i,k,j)-ht(i,j) .gt. zmax) THEN
+         zmax = z(i,k,j)-ht(i,j)
+       ENDIF
+     ENDIF
+   ENDDO
+ ENDDO
+
+ zmax = zmax * 1.e-3
+ WRITE(message, * ) ' ltng_crm_flashrates: reflectivity cloud top height: ', zmax
+ CALL wrf_debug ( 15, message )
+
+ if ( cellcount_method .eq. 2 ) THEN
+   zmax = wrf_dm_max_real(zmax)
+ endif
+
+! Find updraft volume in patch or domain
+! Calculate dz here so that it can be used for updraft volume
+ sumz(kps:kpe)=0
+ countz(kps:kpe)=0
+ DO j = jps, jpe
+  DO k = kps, kpe
+   DO i = ips, ipe
+    sumz(k) = sumz(k) + (z(i,k,j) - ht(i,j))            !units: m
+    countz(k) = countz(k) + 1
+   END DO
+  END DO
+ END DO
+
+ avgz(kps:kpe) = sumz(kps:kpe)/countz(kps:kpe)
+
+ dz(kps) = 0.5*(avgz(kps+1) - avgz(kps))
+ dz(kpe) = 0.5*(avgz(kpe) - avgz(kpe-1))
+
+ DO k = kps+1, kpe-1
+    dz(k) = 0.5*(avgz(k+1) + avgz(k)) - 0.5*(avgz(k) + avgz(k-1))
+ END DO
+
+ up_5ms = 0.
+ DO j = jps,jpe
+    DO k = kps,kpe
+       DO i = ips,ipe
+!!!          if (t(i,k,j) .lt. 273.15-5.) then             !temp lt -5C=268.15K
+!!!  ALABAMA upvol510 equations
+          if (t(i,k,j) .lt. 263.15 .and.  t(i,k,j) .gt. 233.15) then             
+             if (w(i,k,j) .gt. 5.) then
+                up_5ms = up_5ms + dx * dy * dz(k)
+                cnt_grd = cnt_grd + 1
+             endif
+          endif
+       END DO
+    END DO
+ END DO
+
+ IF ( cellcount_method .eq. 2 ) THEN
+   up_5ms = wrf_dm_sum_real(up_5ms)
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: updraft volume: ', up_5ms
+ CALL wrf_debug ( 15, message )
+
+! Find IWP in patch or domain
+! Compute variable masses and flash rate
+ qice = 0.
+ iwp = 0.
+ flag = 0
+ count = 0
+ DO i = ips, ipe
+  DO j = jps, jpe
+   DO k = kps, kpe
+! Compute total ice mass
+         !IF (t(i,k,j) .lt. 263.15 .and. refl(i,k,j) .gt. 18.) THEN
+         IF (t(i,k,j) .lt. 263.15 .and. refl(i,k,j) .gt. 25.) THEN
+          qice = qice + (qs(i,k,j) + qi(i,k,j) + qg(i,k,j)) * rho(i,k,j) * dx * dy * dz(k)
+          flag(i,j) = flag(i,j) + 1
+         ENDIF
+   END DO
+
+    IF (flag(i,j) .ge. 1) THEN
+        count = count + 1
+    ENDIF
+  END DO
+ END DO
+
+! Compute IWP
+ IF (count .gt. 0) THEN
+     iwp = qice / (count * dx * dy)
+ ELSE
+     iwp = 0.
+ ENDIF
+ IF ( cellcount_method .eq. 2 ) THEN
+   iwp = wrf_dm_sum_real(iwp)
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: IWP: ', iwp
+ CALL wrf_debug ( 15, message )
+
+! Find Precipitating Ice Mass in patch or domain
+ qs_p_mass = 0.
+ qg_mass = 0.
+ precip_ice_mass = 0.
+
+ DO j = jps, jpe
+  DO k = kps, kpe
+   DO i = ips, ipe
+
+      IF (t(i,k,j) .lt. 268.15) THEN
+
+! Compute precipitation snow mass
+         IF (qs(i,k,j) .gt. 0.00025) THEN              ! based on Ziegler recommendation; previously 1.e-12
+            vt_snow = 2.                                 ! ***TEMPORARY***
+            cons3 = 10.2754/6.                           ! 10.2754 = 3.41! = GAMMA(4.41) = GAMMA(4+BS)
+            rho850 = 85000./(287.15*273.15)              ! air density at 850 hPa, 273 K
+            asn = 11.72 *(rho850/rho(i,k,j))**0.54       ! AS *(rho0/rho)**0.54 for density correction
+            lambdas = (100.*pi*3.e6/(rho(i,k,j)*qs(i,k,j)))**0.25     ! based on LFO83
+            vt_snow = asn * cons3/(lambdas)**0.41
+            IF (w(i,k,j) .lt. vt_snow) THEN
+              qs_p_mass = qs_p_mass + qs(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+            ENDIF
+         ENDIF
+
+! Compute graupel mass
+         IF (qg(i,k,j) .gt. 0.00050) THEN              ! based on Ziegler recommendation; previously 1.e-12
+             qg_mass = qg_mass + qg(i,k,j) * rho(i,k,j) * dx * dy * dz(k)
+         ENDIF
+
+      ENDIF
+
+   END DO
+  END DO
+ END DO
+ IF (qg_mass .gt. 0. .or. qs_p_mass .gt. 0.) THEN
+     precip_ice_mass = precip_ice_mass + qs_p_mass + qg_mass
+ ENDIF
+
+ IF ( cellcount_method .eq. 2 ) THEN
+   precip_ice_mass = wrf_dm_sum_real(precip_ice_mass)
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: Precipitating Ice Mass: ', precip_ice_mass
+ CALL wrf_debug ( 15, message )
+
+! Find 35 dBZ volume in patch or domain
+ dbz35 = 0.
+ DO j = jps,jpe
+  DO k = kps,kpe
+   DO i = ips,ipe
+    !temp lt -5C=268.15K, temp lt -40C=233.15K; Convert m3 to km3
+    if (t(i,k,j) .lt. 268.15 .and. t(i,k,j) .gt. 233.15 .and.  refl(i,k,j) .gt. 35.) then
+        dbz35 = dbz35 + dx * dy * dz(k) * 1.e-9
+    endif
+   END DO
+  END DO
+ END DO
+
+ IF ( cellcount_method .eq. 2 ) THEN
+   dbz35 = wrf_dm_sum_real(dbz35)
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: 35 dBZ Volume: ', dbz35
+ CALL wrf_debug ( 15, message )
+
+
+! Find upward ice mass flux in patch or domain; Assign flashrate on a per grid basis (instead of patch-wide)
+ counti = 0
+ DO j = jps, jpe
+  DO i = ips, ipe
+     up_iceflx = 0.
+     iceflx_fr = 0.
+     k_plevel = kps
+     tmp_plevel( kps:kpe ) = 0.
+
+! Loop through each vertical level of the grid to find the model level that is closest to 440 hPa at the grid
+     DO k = kps, kpe
+      tmp_plevel(k) = abs(44000. - pres(i,k,j))                        !!!    tmp_plevel(k) = abs(39000. - pres(i,k,j))
+     ENDDO
+
+     k_plevel = minloc(tmp_plevel,1)
+
+! Non-precipitating snow
+     vt_snow = 2.                                 ! ***TEMPORARY***
+     cons3 = 10.2754/6.                           ! 10.2754 = 3.41! = GAMMA(4.41) = GAMMA(4+BS)
+     rho850 = 85000./(287.15*273.15)              ! air density at 850 hPa, 273 K
+     asn = 11.72 *(rho850/rho(i,k_plevel,j))**0.54
+     lambdas = (100.*pi*3.e6/(rho(i,k_plevel,j)*qs(i,k_plevel,j)))**0.25     ! based on LFO83
+     vt_snow = asn * cons3/(lambdas)**0.41
+     IF ( w(i,k_plevel,j) .gt. vt_snow .and. qs(i,k_plevel,j) .ge.  0.00025 ) THEN
+      up_iceflx = up_iceflx + qs(i,k_plevel,j) * rho(i,k_plevel,j) * ( w(i,k_plevel,j) - vt_snow )
+     ENDIF
+
+! Non-precipitating ice
+     IF ( w(i,k_plevel,j) .gt. 0. .and. qi(i,k_plevel,j) .gt. 0. ) THEN
+      up_iceflx = up_iceflx + qi(i,k_plevel,j) * rho(i,k_plevel,j) * w(i,k_plevel,j)       ! [kg ice m-2 cloud s-1]
+ WRITE(message, * ) ' ltng_crm_flashrates: k_plevel=440? : ', pres(i,k_plevel,j), i, j, k_plevel
+ CALL wrf_debug ( 200, message )
+     ENDIF
+
+     iceflx_fr = up_iceflx * 6.58e-7 * dx*dy * 60.    ! (flashes/m2/s  --> flashes/minute)
+     iceflx_flashrate(i,j) = iceflx_fr/60. 
+! count grid cells that have a FR
+     IF ( iceflx_fr .gt. 0.) THEN
+      counti = counti + 1
+     ENDIF
+  ENDDO
+ ENDDO
+ iceflx_fr = 0.
+ IF ( counti .gt. 0. ) THEN
+   iceflx_fr = sum(iceflx_flashrate(ips:ipe,jps:jpe))/counti
+ ENDIF
+ WRITE(message, * ) ' ltng_crm_flashrates: Up Ice Mass Flux FR: ', iceflx_fr, sum(iceflx_flashrate(ips:ipe,jps:jpe)), counti
+ CALL wrf_debug ( 15, message )
+
+!----------------------------------------
+! Compute flash rates across cell
+ if ( mostlyLand .lt. 1.5 ) then
+    wmax_fr  = 5.005e-6 *(wmax**4.55)  ! PR 92 continental eq
+    cldtp_fr = 3.44E-5 * (zmax**4.9)   ! PR 92 continental eq
+ else
+    wmax_fr  = 6.4e-4 * (wmax**1.73)   ! PR 92 marine eq
+    cldtp_fr = 6.57E-6 *(zmax**4.9)    ! Michalon 99 marine eq
+ ENDIF
+ IF ( cnt_grd .gt. 0 ) THEN 
+!!!   upvol_fr = 6.75e-11 * up_5ms - 13.9
+!!! ALABAMA EQUATION
+   upvol_fr = 0.0337e-9 * up_5ms 
+ ENDIF
+ upvol_fr = max(upvol_fr, 0.)          ! Because upvol_fr eqn can be < 0., ensure total flashrates are >= 0.
+
+ iwp_fd = 33.33 * iwp - 0.17           ! (flashes/km2*day)
+ patch_area = (dx*((ipe-ips)+1)) * (dy*((jpe-jps)+1)) * 1.e-6   !  convert from m2 to km2; area of processor/tile
+ iwp_fr = iwp_fd * patch_area / 1440.  ! (flashes/minute)
+ iwp_fr = max(iwp_fr, 0.)              ! Remove negative number of flashes
+
+ pim_fr = precip_ice_mass * 3.4e-8 - 18.1
+ pim_fr = max(pim_fr, 0.)              ! Remove negative number of flashes
+
+ IF ( dbz35 .gt. 0. ) THEN
+   dbz35_fr = 7.2e-2 * dbz35
+!!!   dbz35_fr = 12.977 + 0.0328*dbz35 - 1.5242e-6*dbz35*dbz35      ! specific to Oklahoma 29 May case
+ ENDIF
+! upward ice mass flux flash rate computed above, inside do-loops
+
+
+!----------------------------------------
+! Locate widest part of convective core
+ k_maxcount = kps
+ maxcount = cellcount(kps)
+ DO k=kps+1,kpe
+   IF ( cellcount(k) .gt. maxcount ) THEN
+     k_maxcount = k
+     maxcount = cellcount(k)
+   ENDIF
+ ENDDO
+
+! Distribute flashes across convective core
+ total_fr = upvol_fr                     ! default to wmax method to allow code to run
+ ave_fr = total_fr/maxcount/60.
+ WHERE( refl(ips:ipe,k_maxcount,jps:jpe) .gt. reflthreshold )
+   total_flashrate(ips:ipe,jps:jpe)   = ave_fr
+ ENDWHERE
+! total_fr = iceflx_fr                                          ! default to ice flux at 440 hPa  method to allow code to run
+! ave_fr = total_fr
+! total_flashrate(ips:ipe,jps:jpe)   = iceflx_flashrate(ips:ipe,jps:jpe)                    
+
+! Distribute flashes across patch
+ nxny = ((ipe-ips)+1) * ((jpe-jps)+1)                   ! number of grid cells in patch
+ wmax_flashrate(ips:ipe,jps:jpe)  = wmax_fr/nxny/60.
+ cldtp_flashrate(ips:ipe,jps:jpe) = cldtp_fr/nxny/60.
+ upvol_flashrate(ips:ipe,jps:jpe) = upvol_fr/nxny/60.
+ iwp_flashrate(ips:ipe,jps:jpe)   = iwp_fr/nxny/60.
+ pim_flashrate(ips:ipe,jps:jpe)   = pim_fr/nxny/60.
+ dbz35_flashrate(ips:ipe,jps:jpe) = dbz35_fr/nxny/60.
+!                                                ! upward ice mass flux flash rate computed above, inside do-loops
+
+ WRITE(message, * ) ' ltng_crm_flashrates: total_flashrate sum: ', sum(total_flashrate(ips:ipe,jps:jpe)), sum(iceflx_flashrate(ips:ipe,jps:jpe))
+ CALL wrf_debug (15, message )
+
+!----------------------------------------
+
+ END SUBROUTINE ltng_crm_flashrates
+!
 !**********************************************************************
 !
 ! Price and Rind 1993 base on cold cloud depth (CCD)

@@ -40,6 +40,13 @@
                             ! IC and CG flash rates and accumulated flash count
                              ,ic_flashcount, ic_flashrate              &
                              ,cg_flashcount, cg_flashrate              &
+                             ,wmax_flashcount,   wmax_flashrate        &
+                             ,cldtp_flashcount,  cldtp_flashrate       &
+                             ,upvol_flashcount,  upvol_flashrate       &
+                             ,iwp_flashcount,    iwp_flashrate         &
+                             ,pim_flashcount,    pim_flashrate         &
+                             ,dbz35_flashcount,  dbz35_flashrate       &
+                             ,iceflx_flashcount, iceflx_flashrate      &
 #if ( WRF_CHEM == 1 )
                              ,lnox_opt,lnox_passive                    &
                             ! LNOx tracers (chemistry only)
@@ -68,7 +75,14 @@
 ! Making these optional just in case qualitative lightning indices get implemented
  REAL, OPTIONAL, DIMENSION( ims:ime,jms:jme ), &
                  INTENT(OUT) :: ic_flashcount, ic_flashrate, &
-                                cg_flashcount, cg_flashrate
+                                cg_flashcount, cg_flashrate, &
+                                wmax_flashcount, wmax_flashrate, &
+                                cldtp_flashcount, cldtp_flashrate, &
+                                upvol_flashcount, upvol_flashrate, &
+                                iwp_flashcount, iwp_flashrate, &
+                                pim_flashcount, pim_flashrate, &
+                                dbz35_flashcount, dbz35_flashrate, &
+                                iceflx_flashcount, iceflx_flashrate  
 
 #if ( WRF_CHEM == 1 )
  INTEGER, INTENT(IN)         :: lnox_opt
@@ -109,7 +123,7 @@
  ltng_select: SELECT CASE(lightning_option)
 
     ! Convective resolved/permitted
-    CASE (ltng_crm_PR92w,ltng_crm_PR92z)
+    CASE (ltng_crm_PR92w,ltng_crm_PR92z,ltng_crm)
         IF ( do_radar_ref .eq. 0 .or. mp_physics .eq. 0) THEN
           CALL wrf_error_fatal( ' lightning_init: Selected lightning option requires microphysics and do_radar_ref=1' )
         ENDIF
@@ -119,8 +133,8 @@
 
     ! Convective parameterized
     CASE (ltng_cpm_PR92z)
-        IF ( cu_physics .ne. GDSCHEME .and. cu_physics .ne. G3SCHEME  ) THEN
-          CALL wrf_error_fatal( ' lightning_init: Selected lightning option requires GD or G3 convective parameterization' )
+        IF ( cu_physics .ne. GDSCHEME .and. cu_physics .ne. G3SCHEME  .and. cu_physics .ne. GFSCHEME  ) THEN
+          CALL wrf_error_fatal( ' lightning_init: Selected lightning option requires GD, G3 or GF convective parameterization' )
         ENDIF
 
         WRITE(message, * ) ' lightning_init: CPM lightning option selected: ', lightning_option
@@ -149,6 +163,20 @@
     ic_flashcount(:,:) = 0.
     cg_flashrate(:,:)  = 0.
     cg_flashcount(:,:) = 0.
+    wmax_flashrate(:,:)  = 0.
+    wmax_flashcount(:,:) = 0.
+    cldtp_flashrate(:,:)  = 0.
+    cldtp_flashcount(:,:) = 0.
+    upvol_flashrate(:,:)  = 0.
+    upvol_flashcount(:,:) = 0.
+    iwp_flashrate(:,:)  = 0.
+    iwp_flashcount(:,:) = 0.
+    pim_flashrate(:,:)  = 0.
+    pim_flashcount(:,:) = 0.
+    dbz35_flashrate(:,:)  = 0.
+    dbz35_flashcount(:,:) = 0.
+    iceflx_flashrate(:,:)  = 0.
+    iceflx_flashcount(:,:) = 0.
  ELSE
     CALL wrf_error_fatal ( ' lightning_init: flash arrays not present' )
  ENDIF
@@ -226,8 +254,15 @@
                             ims, ime, jms, jme, kms, kme,         &
                             its, ite, jts, jte, kts, kte,         &
                           ! Mandatory outputs for all quantitative schemes
-                            ic_flashcount, ic_flashrate,          &
-                            cg_flashcount, cg_flashrate,           &
+                            ic_flashcount,     ic_flashrate,      &
+                            cg_flashcount,     cg_flashrate,      &
+                            wmax_flashcount,   wmax_flashrate,    &
+                            cldtp_flashcount,  cldtp_flashrate,   &
+                            upvol_flashcount,  upvol_flashrate,   &
+                            iwp_flashcount,    iwp_flashrate,     &
+                            pim_flashcount,    pim_flashrate,     &
+                            dbz35_flashcount,  dbz35_flashrate,   &
+                            iceflx_flashcount, iceflx_flashrate,  &
                             lpi                                   &
                           )
 !-----------------------------------------------------------------
@@ -242,6 +277,7 @@
 ! Parameterization options
  USE module_ltng_crmpr92       ! lightning_option == 1,   ltng_crm_PR92w
                                ! lightning_option == 2,   ltng_crm_PR92z
+                               ! lightning_option == 4,   ltng_crm
  USE module_ltng_cpmpr92z      ! lightning_option == 11,  ltng_cpm_PR92z
 
 ! IC:CG methods
@@ -249,7 +285,7 @@
 
 ! LPI 
 #if (EM_CORE==1)
-  USE module_ltng_lpi
+  USE module_ltng_lpi          ! lightning_option == 3
 #endif
 
  IMPLICIT NONE
@@ -292,11 +328,25 @@
 ! Mandatory outputs for all quantitative schemes
  REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: ic_flashcount , cg_flashcount
  REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: ic_flashrate  , cg_flashrate
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: wmax_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: wmax_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: cldtp_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: cldtp_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: upvol_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: upvol_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: iwp_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: iwp_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: pim_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: pim_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: dbz35_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: dbz35_flashrate  
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT) :: iceflx_flashcount 
+ REAL, OPTIONAL, DIMENSION( ims:ime, jms:jme ), INTENT(  OUT) :: iceflx_flashrate        
 
 
 ! Local variables
  REAL, DIMENSION( ims:ime, jms:jme ) :: total_flashrate
- CHARACTER (LEN=80) :: message
+ CHARACTER (LEN=100) :: message
 
  REAL, PARAMETER            :: reflthreshold = 20. ! reflectivity threshold for CRM schemes
  REAL, DIMENSION( kms:kme ) :: cellcount
@@ -305,8 +355,10 @@
 
  IF ( lightning_option .eq. 0 ) RETURN
 
+ CALL wrf_debug ( 200, ' lightning_driver: check if itimestep*dt < ltng_start_sec  ' )
  IF ( itimestep * dt .lt. lightning_start_seconds ) RETURN
 
+ CALL wrf_debug ( 200, ' lightning_driver: is itimestep*dt - ltng_start_sec factor of ltng_dt?  ' )
  IF ( MOD((itimestep * dt - lightning_start_seconds), lightning_dt ) .ne. 0 ) RETURN
 
 !-----------------------------------------------------------------
@@ -320,9 +372,21 @@
 !
 !-----------------------------------------------------------------
 
+ total_flashrate( its:ite,jts:jte ) = 0.
+ wmax_flashrate(  its:ite,jts:jte ) = 0.
+ cldtp_flashrate( its:ite,jts:jte ) = 0.
+ upvol_flashrate( its:ite,jts:jte ) = 0.
+ iwp_flashrate(   its:ite,jts:jte ) = 0.
+ pim_flashrate(   its:ite,jts:jte ) = 0.
+ dbz35_flashrate( its:ite,jts:jte ) = 0.
+ iceflx_flashrate(its:ite,jts:jte ) = 0.
+
  IF ( lightning_option .eq. ltng_crm_PR92w .or. &
-      lightning_option .eq. ltng_crm_PR92z ) THEN
+      lightning_option .eq. ltng_crm_PR92z .or. &
+      lightning_option .eq. ltng_crm       ) THEN
    CALL wrf_debug ( 100, ' lightning_driver: determining cloud extents for CRM' )
+   WRITE(message, * ) ' lightning_driver: Max refl = ', maxval(refl)
+   CALL wrf_debug ( 100, message )
    CALL countCells( &
           ! Inputs
             refl, reflthreshold, cellcount_method,     &
@@ -375,6 +439,50 @@
                   ! Mandatory output for all quantitative schemes
                     total_flashrate                       &
                   )
+    CASE( ltng_crm       )
+        CALL wrf_debug ( 100, ' lightning_driver: calling ALL CRM LTNG FR schemes         ' ) 
+        CALL ltng_crm_flashrates (                             &
+                  ! Frequently used prognostics
+                    dx, dy, xland, ht, z, t_phy, p_phy, rho,   &
+                    w, refl, reflthreshold, cellcount,         &
+                  ! Scheme specific namelist inputs
+                    cellcount_method,                          &
+                  ! Order dependent args for domain, mem, and tile dims
+                    ids,ide, jds,jde, kds,kde,                 &
+                    ims,ime, jms,jme, kms,kme,                 &
+                    its,ite, jts,jte, kts,kte,                 &
+                  ! Mandatory output for all quantitative schemes
+                    total_flashrate,                           &
+                    wmax_flashrate,  cldtp_flashrate,          & 
+                    upvol_flashrate, iwp_flashrate,            & 
+                    pim_flashrate,   dbz35_flashrate,          & 
+                    iceflx_flashrate,                          & 
+                  ! keyword names
+                    QV=moist(ims,kms,jms,P_QV),                &   !Qv=qv_curr,
+                    QR=moist(ims,kms,jms,P_QR),                &   !QR=qr_curr,
+                    QI=moist(ims,kms,jms,P_QI),                &   !QI=qi_curr,
+                    QS=moist(ims,kms,jms,P_QS),                &   !qs_curr,   
+                    QG=moist(ims,kms,jms,P_QG)                 &   !qg_curr,   
+                  )
+        wmax_flashrate(its:ite,jts:jte)   = wmax_flashrate(its:ite,jts:jte) * 1.          ! multiply by the flashrate factor that is specified here
+        cldtp_flashrate(its:ite,jts:jte)  = cldtp_flashrate(its:ite,jts:jte) * 1.
+        upvol_flashrate(its:ite,jts:jte)  = upvol_flashrate(its:ite,jts:jte) * 1.
+        iwp_flashrate(its:ite,jts:jte)    = iwp_flashrate(its:ite,jts:jte) * 1.
+        pim_flashrate(its:ite,jts:jte)    = pim_flashrate(its:ite,jts:jte) * 1.
+        dbz35_flashrate(its:ite,jts:jte)  = dbz35_flashrate(its:ite,jts:jte) * 1.
+        iceflx_flashrate(its:ite,jts:jte) = iceflx_flashrate(its:ite,jts:jte) * 1.
+
+        wmax_flashcount(its:ite,jts:jte)   = wmax_flashcount(its:ite,jts:jte)   + wmax_flashrate(its:ite,jts:jte)   * lightning_dt
+        cldtp_flashcount(its:ite,jts:jte)  = cldtp_flashcount(its:ite,jts:jte)  + cldtp_flashrate(its:ite,jts:jte)  * lightning_dt
+        upvol_flashcount(its:ite,jts:jte)  = upvol_flashcount(its:ite,jts:jte)  + upvol_flashrate(its:ite,jts:jte)  * lightning_dt
+        iwp_flashcount(its:ite,jts:jte)    = iwp_flashcount(its:ite,jts:jte)    + iwp_flashrate(its:ite,jts:jte)    * lightning_dt
+        pim_flashcount(its:ite,jts:jte)    = pim_flashcount(its:ite,jts:jte)    + pim_flashrate(its:ite,jts:jte)    * lightning_dt
+        dbz35_flashcount(its:ite,jts:jte)  = dbz35_flashcount(its:ite,jts:jte)  + dbz35_flashrate(its:ite,jts:jte)  * lightning_dt
+        iceflx_flashcount(its:ite,jts:jte) = iceflx_flashcount(its:ite,jts:jte) + iceflx_flashrate(its:ite,jts:jte) * lightning_dt
+ WRITE(message, * ) ' lightning_driver: total, iceflx_FR sums: ', sum(total_flashrate(its:ite,jts:jte)), sum(iceflx_flashrate(its:ite,jts:jte)), &
+                      sum(iceflx_flashcount(its:ite,jts:jte))
+ CALL wrf_debug ( 15, message )
+
 !   CASE ( another_crm_option)
 !       CALL ...
 
@@ -438,7 +546,7 @@
         CALL wrf_debug( 100, ' lightning_driver: using option-default IC:CG method' )
         iccg_method_default: SELECT CASE(lightning_option)
 
-            CASE( ltng_crm_PR92w, ltng_crm_PR92z, ltng_cpm_PR92z ) iccg_method_default
+            CASE( ltng_crm_PR92w, ltng_crm_PR92z, ltng_crm, ltng_cpm_PR92z ) iccg_method_default
                 CALL iccg_boccippio( &
                             xlat, xlon,                                &
                             iccg_prescribed_num, iccg_prescribed_den,  &
@@ -505,7 +613,7 @@
     ! Price and Rind, 1993
     CASE( 3 ) iccg_select
         iccg_pr93_select: SELECT CASE(lightning_option)
-        CASE( ltng_crm_PR92w, ltng_crm_PR92z ) iccg_pr93_select
+        CASE( ltng_crm_PR92w, ltng_crm_PR92z, ltng_crm ) iccg_pr93_select
             CALL wrf_debug ( 100, ' lightning_driver: using Price and Rind 1993 IC:CG ratio (CRM)')
             CALL iccg_crm_pr93( &
                     refl, reflthreshold, t_phy, z,             &
@@ -559,12 +667,17 @@
 !-----------------------------------------------------------------
 
  CALL wrf_debug( 200, ' lightning_driver: converting flash rates to flash counts')
+ WRITE(message, * ) ' lightning_driver: IC, CG_flashrate sums: ', sum(ic_flashrate(its:ite,jts:jte)), sum(cg_flashrate(its:ite,jts:jte))
+ CALL wrf_debug ( 15, message )
 
  ic_flashrate(its:ite,jts:jte) = ic_flashrate(its:ite,jts:jte) * flashrate_factor
  cg_flashrate(its:ite,jts:jte) = cg_flashrate(its:ite,jts:jte) * flashrate_factor
 
  ic_flashcount(its:ite,jts:jte) = ic_flashcount(its:ite,jts:jte) + ic_flashrate(its:ite,jts:jte) * lightning_dt
  cg_flashcount(its:ite,jts:jte) = cg_flashcount(its:ite,jts:jte) + cg_flashrate(its:ite,jts:jte) * lightning_dt
+ WRITE(message, * ) ' lightning_driver: IC, CG_flashcount sums: ', sum(ic_flashcount(its:ite,jts:jte)), sum(cg_flashcount(its:ite,jts:jte)),   &
+                      sum(iceflx_flashcount(its:ite,jts:jte))
+ CALL wrf_debug ( 15, message )
 
 !-----------------------------------------------------------------
 
