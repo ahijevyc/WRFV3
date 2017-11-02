@@ -218,9 +218,16 @@ CONTAINS
             ims, ime, jms, jme, kms, kme,         &
             ips, ipe, jps, jpe, kps, kpe,         &
           ! Mandatory outputs for all quantitative schemes
-            grid%ic_flashcount, grid%ic_flashrate,          &
-            grid%cg_flashcount, grid%cg_flashrate,          &
-            grid%lpi                                        &   
+            grid%ic_flashcount,    grid%ic_flashrate,          &
+            grid%cg_flashcount,    grid%cg_flashrate,          &
+            grid%wmax_flashcount,  grid%wmax_flashrate,        &
+            grid%cldtp_flashcount, grid%cldtp_flashrate,       &
+            grid%upvol_flashcount, grid%upvol_flashrate,       &
+            grid%iwp_flashcount,   grid%iwp_flashrate,         &
+            grid%pim_flashcount,   grid%pim_flashrate,         &
+            grid%dbz35_flashcount, grid%dbz35_flashrate,       &
+            grid%iceflx_flashcount,grid%iceflx_flashrate,      &
+            grid%lpi                                           &   
       )    
       END IF LIGHTNING
 
