@@ -579,7 +579,8 @@
 
     ! Used-prescribed constant
     CASE( 1 ) iccg_select
-        WRITE(message, * ) ' lightning_driver: using user-prescribed IC:CG ratio = ', iccg_prescribed_num, iccg_prescribed_den
+        ! Format numbers so you don't exceed 80 character allocation
+        WRITE(message, '(a,f8.4,":",f8.4)') ' lightning_driver: using user-prescribed IC:CG ratio = ', iccg_prescribed_num, iccg_prescribed_den
         CALL wrf_debug ( 100, message )
         CALL iccg_user_prescribed( &
                     iccg_prescribed_num,                  &
