@@ -157,28 +157,55 @@
 !-- zero out arrays
  IF ( PRESENT( ic_flashcount ) .and. PRESENT( ic_flashrate ) .and. &
       PRESENT( cg_flashcount ) .and. PRESENT( cg_flashrate ) ) THEN
-    CALL wrf_debug ( 100 , ' lightning_init: flash initializing lightning flash arrays' )
-
-    ic_flashrate(:,:)  = 0.
-    ic_flashcount(:,:) = 0.
-    cg_flashrate(:,:)  = 0.
-    cg_flashcount(:,:) = 0.
-    wmax_flashrate(:,:)  = 0.
-    wmax_flashcount(:,:) = 0.
-    cldtp_flashrate(:,:)  = 0.
-    cldtp_flashcount(:,:) = 0.
-    upvol_flashrate(:,:)  = 0.
-    upvol_flashcount(:,:) = 0.
-    iwp_flashrate(:,:)  = 0.
-    iwp_flashcount(:,:) = 0.
-    pim_flashrate(:,:)  = 0.
-    pim_flashcount(:,:) = 0.
-    dbz35_flashrate(:,:)  = 0.
-    dbz35_flashcount(:,:) = 0.
-    iceflx_flashrate(:,:)  = 0.
-    iceflx_flashcount(:,:) = 0.
+    CALL wrf_debug ( 100 , ' lightning_init: initializing ic/cg lightning flash arrays' )
+    ic_flashrate(:,:)      = 0.
+    ic_flashcount(:,:)     = 0.
+    cg_flashrate(:,:)      = 0.
+    cg_flashcount(:,:)     = 0.
  ELSE
-    CALL wrf_error_fatal ( ' lightning_init: flash arrays not present' )
+    CALL wrf_error_fatal ( ' lightning_init: ic/cg flash arrays not present' )
+ ENDIF
+
+ IF ( PRESENT( wmax_flashcount ) .and. PRESENT( wmax_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing wmax lightning flash arrays' )
+    wmax_flashrate(:,:)      = 0.
+    wmax_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( cldtp_flashcount ) .and. PRESENT( cldtp_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing cldtp lightning flash arrays' )
+    cldtp_flashrate(:,:)      = 0.
+    cldtp_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( upvol_flashcount ) .and. PRESENT( upvol_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing upvol lightning flash arrays' )
+    upvol_flashrate(:,:)      = 0.
+    upvol_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( iwp_flashcount ) .and. PRESENT( iwp_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing iwp lightning flash arrays' )
+    iwp_flashrate(:,:)      = 0.
+    iwp_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( pim_flashcount ) .and. PRESENT( pim_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing pim lightning flash arrays' )
+    pim_flashrate(:,:)      = 0.
+    pim_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( dbz35_flashcount ) .and. PRESENT( dbz35_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing dbz35 lightning flash arrays' )
+    dbz35_flashrate(:,:)      = 0.
+    dbz35_flashcount(:,:)     = 0.
+ ENDIF
+
+ IF ( PRESENT( iceflx_flashcount ) .and. PRESENT( iceflx_flashrate ) ) THEN
+    CALL wrf_debug ( 100 , ' lightning_init: initializing iceflx lightning flash arrays' )
+    iceflx_flashrate(:,:)      = 0.
+    iceflx_flashcount(:,:)     = 0.
  ENDIF
 
 !-- Resolve auto-cellcount method option (cellcount_method=0)
