@@ -2898,8 +2898,8 @@ state    real  iccg_in_den    ij      misc        1         -      i{16}r     "i
 
 package	ltng_none           lightning_option==0            -       -
 package	ltng_crm_PR92w      lightning_option==1            -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate
-package ltng_crm_PR92z      lightning_option==2            -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate
-package ltng_crm            lightning_option==4            -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate,total_flashcount,total_flashrate
+package  ltng_crm_PR92z      lightning_option==2            -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate
+package  ltng_crm            lightning_option==4            -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate
 package	ltng_cpm_PR92z      lightning_option==11           -       state:ic_flashcount,ic_flashrate,cg_flashcount,cg_flashrate
 package	ltng_lpi            lightning_option==3           -        state:lpi
 # only need to specify these once; not for every io_form* variable
