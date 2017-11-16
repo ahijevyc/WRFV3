@@ -1,180 +1,180 @@
-MODULE module_ltng_lpi
-!Yair, Y., B. Lynn, C. Price, V. Kotroni, K. Lagouvardos, E. Morin,
-!A. Magnai, and M. del Carmen Llasat (2010), Predicting the potential for
-!lightning activity in Mediterranean storms based on the Weather
-!Research and Forecasting (WRF) model dynamic and microphysical
-!fields, J. Geophys. Res., 115, D04205, doi:10.1029/2008JD010868.
-! However, we don't check for collapsing cell (so as not to require use of halo).
-! This means that lpi is also calculated in cells that are no longer (on average) growing
-! For a "complete" lightning forecast scheme, please see:
-!http://journals.ametsoc.org/doi/abs/10.1175/WAF-D-11-00144.1
-!(Predicting Cloud-to-Ground and Intracloud Lightning in Weather Forecast Models)
+MODULE MODULE_LTNG_LPI
+!YAIR, Y., B. LYNN, C. PRICE, V. KOTRONI, K. LAGOUVARDOS, E. MORIN,
+!A. MAGNAI, AND M. DEL CARMEN LLASAT (2010), PREDICTING THE POTENTIAL FOR
+!LIGHTNING ACTIVITY IN MEDITERRANEAN STORMS BASED ON THE WEATHER
+!RESEARCH AND FORECASTING (WRF) MODEL DYNAMIC AND MICROPHYSICAL
+!FIELDS, J. GEOPHYS. RES., 115, D04205, DOI:10.1029/2008JD010868.
+! HOWEVER, WE DON'T CHECK FOR COLLAPSING CELL (SO AS NOT TO REQUIRE USE OF HALO).
+! THIS MEANS THAT LPI IS ALSO CALCULATED IN CELLS THAT ARE NO LONGER (ON AVERAGE) GROWING
+! FOR A "COMPLETE" LIGHTNING FORECAST SCHEME, PLEASE SEE:
+!HTTP://JOURNALS.AMETSOC.ORG/DOI/ABS/10.1175/WAF-D-11-00144.1
+!(PREDICTING CLOUD-TO-GROUND AND INTRACLOUD LIGHTNING IN WEATHER FORECAST MODELS)
 
 CONTAINS
 !===================================================================
 !
-  SUBROUTINE calclpi(qv,qc, qr, qi, qs, qg, qh                            &
-                 ,w,z,dz8w,pi_phy,th_phy,p_phy,rho_phy                    &
-                 ,lpi&
-                 ,ids,ide, jds,jde, kds,kde                        &
-                 ,ims,ime, jms,jme, kms,kme                        &
-                 ,its,ite, jts,jte, kts,kte                        &
+  SUBROUTINE CALCLPI(QV,QC, QR, QI, QS, QG, QH                            &
+                 ,W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY                    &
+                 ,LPI&
+                 ,IDS,IDE, JDS,JDE, KDS,KDE                        &
+                 ,IMS,IME, JMS,JME, KMS,KME                        &
+                 ,ITS,ITE, JTS,JTE, KTS,KTE                        &
                                                                    )
 !-------------------------------------------------------------------
   IMPLICIT NONE
 !-------------------------------------------------------------------
 !
 !
-  INTEGER,      INTENT(IN   )    ::   ids,ide, jds,jde, kds,kde , &
-                                      ims,ime, jms,jme, kms,kme , &
-                                      its,ite, jts,jte, kts,kte
-  REAL, DIMENSION( ims:ime , kms:kme , jms:jme ),                 &
+  INTEGER,      INTENT(IN   )    ::   IDS,IDE, JDS,JDE, KDS,KDE , &
+                                      IMS,IME, JMS,JME, KMS,KME , &
+                                      ITS,ITE, JTS,JTE, KTS,KTE
+  REAL, DIMENSION( IMS:IME , KMS:KME , JMS:JME ),                 &
         INTENT(IN) ::                                          &
-                                                              qv, &
-                                                              qc, &
-                                                              qi, &
-                                                              qr, &
-                                                              qs, &
-                                                              qg,qh
+                                                              QV, &
+                                                              QC, &
+                                                              QI, &
+                                                              QR, &
+                                                              QS, &
+                                                              QG,QH
 
-      REAL, DIMENSION( ims:ime, kms:kme, jms:jme ),                  &
-         INTENT(IN ) ::  w, z
-      REAL, INTENT(IN),     DIMENSION(ims:ime, kms:kme, jms:jme)::      &
-     &                      dz8w,pi_phy,p_phy,rho_phy
-      REAL, INTENT(IN),  DIMENSION(ims:ime, kms:kme, jms:jme)::      &
-     &                      th_phy
-      REAL, INTENT(INOUT),  DIMENSION(ims:ime,jms:jme)::      &
+      REAL, DIMENSION( IMS:IME, KMS:KME, JMS:JME ),                  &
+         INTENT(IN ) ::  W, Z
+      REAL, INTENT(IN),     DIMENSION(IMS:IME, KMS:KME, JMS:JME)::      &
+     &                      DZ8W,PI_PHY,P_PHY,RHO_PHY
+      REAL, INTENT(IN),  DIMENSION(IMS:IME, KMS:KME, JMS:JME)::      &
+     &                      TH_PHY
+      REAL, INTENT(INOUT),  DIMENSION(IMS:IME,JMS:JME)::      &
      &                      LPI
 
 
 
 
-      REAL, DIMENSION(kms:kme)::    tempk,rh
-      REAL, DIMENSION(kms:kme):: qv1d,p1d,rho1d,qti1d
-      REAL, DIMENSION(kms:kme):: temp,qc1d,ql1d,qi1d,qs1d,qg1d,lpi1d
-      REAL, DIMENSION(0:kme):: w1d,height
-      REAL, DIMENSION(kms:kme):: e1d,height_t,w1d_t
-      REAL z_full,qrs,teten,RELHUM,LOC,Td_850,Td_700,PC_DWPT
-      INTEGER level
-      REAL :: dt_lpi,t_base,t_top
+      REAL, DIMENSION(KMS:KME)::    TEMPK,RH
+      REAL, DIMENSION(KMS:KME):: QV1D,P1D,RHO1D,QTI1D
+      REAL, DIMENSION(KMS:KME):: TEMP,QC1D,QL1D,QI1D,QS1D,QG1D,LPI1D
+      REAL, DIMENSION(0:KME):: W1D,HEIGHT
+      REAL, DIMENSION(KMS:KME):: E1D,HEIGHT_T,W1D_T
+      REAL Z_FULL,QRS,TETEN,RELHUM,LOC,TD_850,TD_700,PC_DWPT
+      INTEGER LEVEL
+      REAL :: DT_LPI,T_BASE,T_TOP
       INTEGER I_COLLAPSE
       LOGICAL LOOK_T
       INTEGER I_START,I_END,J_START,J_END
 
 
-  INTEGER ::               i,j,k
+  INTEGER ::               I,J,K
 !-------------------------------------------------------------------
-      DO j = jts,jte
-      DO i = its,ite
-        z_full=0.
-        height(0)=z_full
-        w1d(0)=w(i,1,j)
-      DO k = kts,kte-1
-          if (k.lt.kte-1)then
-           w1d(k)=w(i,k+1,j)
-          else
-           w1d(k)=0.
-          end if
-          temp(k) = th_phy(i,k,j)*pi_phy(i,k,j)-273.16
-          tempk(k) = th_phy(i,k,j)*pi_phy(i,k,j)
-          qv1d(k)=qv(i,k,j)
-          p1d(k)=p_phy(i,k,j)
-          rho1d(k)=rho_phy(i,k,j)
-          z_full=z_full+dz8w(i,k,j)
-          height(k)=z_full
-          qc1d(k)=qc(i,k,j)
-          ql1d(k)=qc(i,k,j)+qr(i,k,j)
-          qi1d(k)=qi(i,k,j)
-          qti1d(k)=qi(i,k,j)+qs(i,k,j)+qg(i,k,j)+qh(i,k,j)
-          qs1d(k)=qs(i,k,j)
-!         qg1d(k)=qg(i,k,j)+qh(i,k,j)
-! Hail doesn't usually charge
-          qg1d(k)=qg(i,k,j)
-! For conservative advection multiply by rho1d and divide by it below
+      DO J = JTS,JTE
+      DO I = ITS,ITE
+        Z_FULL=0.
+        HEIGHT(0)=Z_FULL
+        W1D(0)=W(I,1,J)
+      DO K = KTS,KTE-1
+          IF (K.LT.KTE-1)THEN
+           W1D(K)=W(I,K+1,J)
+          ELSE
+           W1D(K)=0.
+          END IF
+          TEMP(K) = TH_PHY(I,K,J)*PI_PHY(I,K,J)-273.16
+          TEMPK(K) = TH_PHY(I,K,J)*PI_PHY(I,K,J)
+          QV1D(K)=QV(I,K,J)
+          P1D(K)=P_PHY(I,K,J)
+          RHO1D(K)=RHO_PHY(I,K,J)
+          Z_FULL=Z_FULL+DZ8W(I,K,J)
+          HEIGHT(K)=Z_FULL
+          QC1D(K)=QC(I,K,J)
+          QL1D(K)=QC(I,K,J)+QR(I,K,J)
+          QI1D(K)=QI(I,K,J)
+          QTI1D(K)=QI(I,K,J)+QS(I,K,J)+QG(I,K,J)+QH(I,K,J)
+          QS1D(K)=QS(I,K,J)
+!         QG1D(K)=QG(I,K,J)+QH(I,K,J)
+! HAIL DOESN'T USUALLY CHARGE
+          QG1D(K)=QG(I,K,J)
+! FOR CONSERVATIVE ADVECTION MULTIPLY BY RHO1D AND DIVIDE BY IT BELOW
       ENDDO
-      do k = kts,kte-1
-       height_t(k)=0.5*(height(k-1)+height(k))
-       w1d_t(k)=0.5*(w1d(k-1)+w1d(k))
-      end do
-      t_base=-0
-      t_top=-20
-      call calc_lpi(ql1d,qi1d,qs1d,qg1d,w1d,temp,height,lpi(i,j),t_base,t_top,kme,kte)
+      DO K = KTS,KTE-1
+       HEIGHT_T(K)=0.5*(HEIGHT(K-1)+HEIGHT(K))
+       W1D_T(K)=0.5*(W1D(K-1)+W1D(K))
+      END DO
+      T_BASE=-0
+      T_TOP=-20
+      CALL CALC_LPI(QL1D,QI1D,QS1D,QG1D,W1D,TEMP,HEIGHT,LPI(I,J),T_BASE,T_TOP,KME,KTE)
       END DO
       END DO
-      return
-      end subroutine calclpi
-      subroutine &
-     &  calc_lpi(ql3d,qi3d,qs3d,qg3d,w3d,t3d,height,lpi,t_base,t_top,nk,nke)
-      implicit none
-      integer nk,nke
-      real t_base,t_top
-      real ql3d(nk)
-      real qg3d(nk)
-      real qi3d(nk)
-      real qs3d(nk)
-      real w3d(0:nk)
-      real t3d(nk)
-      real height(0:nk)
-      real lpi
-      real del_z(nk)
-      real w_ave(nk)
-      integer ic,jc,icnt,i,j,k,i_collapse
-      real i_dist,j_dist,del_z_tot
-      real top, bot
-      real num,den,ave_z
-      real num_s,den_s
-      real num_i,den_i
-      real q_isg
-      icnt=0
-      do k=1,nke
-        top=height(k)
-        bot=height(k-1)
-        del_z(k)=top-bot
-        w_ave(k)=0.5*(w3d(k)+w3d(k-1))
-      end do
+      RETURN
+      END SUBROUTINE CALCLPI
+      SUBROUTINE &
+     &  CALC_LPI(QL3D,QI3D,QS3D,QG3D,W3D,T3D,HEIGHT,LPI,T_BASE,T_TOP,NK,NKE)
+      IMPLICIT NONE
+      INTEGER NK,NKE
+      REAL T_BASE,T_TOP
+      REAL QL3D(NK)
+      REAL QG3D(NK)
+      REAL QI3D(NK)
+      REAL QS3D(NK)
+      REAL W3D(0:NK)
+      REAL T3D(NK)
+      REAL HEIGHT(0:NK)
+      REAL LPI
+      REAL DEL_Z(NK)
+      REAL W_AVE(NK)
+      INTEGER IC,JC,ICNT,I,J,K,I_COLLAPSE
+      REAL I_DIST,J_DIST,DEL_Z_TOT
+      REAL TOP, BOT
+      REAL NUM,DEN,AVE_Z
+      REAL NUM_S,DEN_S
+      REAL NUM_I,DEN_I
+      REAL Q_ISG
+      ICNT=0
+      DO K=1,NKE
+        TOP=HEIGHT(K)
+        BOT=HEIGHT(K-1)
+        DEL_Z(K)=TOP-BOT
+        W_AVE(K)=0.5*(W3D(K)+W3D(K-1))
+      END DO
 !
-!     Check for collapsing cell
-! Here, we don't check, since it requires a halo.
-      ave_z=0
-      del_z_tot=0
-      lpi=0
-      do k=1,nke-1
-       if (t3d(k).le.t_base.and.t3d(k).gt.t_top)then ! set temp range
+!     CHECK FOR COLLAPSING CELL
+! HERE, WE DON'T CHECK, SINCE IT REQUIRES A HALO.
+      AVE_Z=0
+      DEL_Z_TOT=0
+      LPI=0
+      DO K=1,NKE-1
+       IF (T3D(K).LE.T_BASE.AND.T3D(K).GT.T_TOP)THEN ! SET TEMP RANGE
         
-        den_i = qi3d(k)+qg3d(k)     
-        den_s = qs3d(k)+qg3d(k)
-        if (qs3d(k).eq.0.or.qg3d(k).eq.0.)then !checks for zeroes
-         den_s=10000.
-         num_s = 0.
-        else
-         num_s = sqrt(qs3d(k)*qg3d(k))   
-        end if
-        if (qi3d(k).eq.0.or.qg3d(k).eq.0.)then  ! checks for zeroes
-         den_i=10000.
-         num_i = 0.
-        else
-         num_i = sqrt(qi3d(k)*qg3d(k))
-        end if
-        q_isg = qg3d(k)*(num_i/den_i+num_s/den_s)  ! ice "fract"-content
+        DEN_I = QI3D(K)+QG3D(K)     
+        DEN_S = QS3D(K)+QG3D(K)
+        IF (QS3D(K).EQ.0.OR.QG3D(K).EQ.0.)THEN !CHECKS FOR ZEROES
+         DEN_S=10000.
+         NUM_S = 0.
+        ELSE
+         NUM_S = SQRT(QS3D(K)*QG3D(K))   
+        END IF
+        IF (QI3D(K).EQ.0.OR.QG3D(K).EQ.0.)THEN  ! CHECKS FOR ZEROES
+         DEN_I=10000.
+         NUM_I = 0.
+        ELSE
+         NUM_I = SQRT(QI3D(K)*QG3D(K))
+        END IF
+        Q_ISG = QG3D(K)*(NUM_I/DEN_I+NUM_S/DEN_S)  ! ICE "FRACT"-CONTENT
 
-        if (ql3d(k).eq.0.or.q_isg.eq.0)then
-          num=0
-          den=10000.
-        else
-         num = sqrt(ql3d(k)*q_isg)
-         den = ql3d(k)+q_isg
-        end if
-        del_z_tot=del_z_tot+del_z(k)
-        if (num.gt.0)then
-         ave_z=ave_z+del_z(k)*(2.*num/den)*w_ave(k)**2 ! lightning potential index J/unit-mass
-        end if
-       end if
-      end do
+        IF (QL3D(K).EQ.0.OR.Q_ISG.EQ.0)THEN
+          NUM=0
+          DEN=10000.
+        ELSE
+         NUM = SQRT(QL3D(K)*Q_ISG)
+         DEN = QL3D(K)+Q_ISG
+        END IF
+        DEL_Z_TOT=DEL_Z_TOT+DEL_Z(K)
+        IF (NUM.GT.0)THEN
+         AVE_Z=AVE_Z+DEL_Z(K)*(2.*NUM/DEN)*W_AVE(K)**2 ! LIGHTNING POTENTIAL INDEX J/UNIT-MASS
+        END IF
+       END IF
+      END DO
 !
-      if (del_z_tot.eq.0)del_z_tot=100000
-      lpi=ave_z/del_z_tot
+      IF (DEL_Z_TOT.EQ.0)DEL_Z_TOT=100000
+      LPI=AVE_Z/DEL_Z_TOT
        
 !
-      return
-      end subroutine calc_lpi
-  END MODULE module_ltng_lpi
+      RETURN
+      END SUBROUTINE CALC_LPI
+  END MODULE MODULE_LTNG_LPI
