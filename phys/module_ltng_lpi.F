@@ -2,6 +2,14 @@
 !
 MODULE MODULE_LTNG_LPI
 
+! USE WRF PHYSICS CONSTANTS
+      USE MODULE_MODEL_CONSTANTS, ONLY:                           &
+                                        PICONST                   &
+                                      , GRAV => G
+
+! USE GAMMA FUNCTION FROM THOMPSON MICROPHYSICS
+      USE MODULE_MP_THOMPSON,     ONLY: WGAMMA
+
 CONTAINS
 !===================================================================
 !
@@ -16,7 +24,6 @@ CONTAINS
 !-------------------------------------------------------------------
       IMPLICIT NONE
 !-------------------------------------------------------------------
-      REAL, PARAMETER :: T_0 = 273.15
 !-------------------------------------------------------------------
 
       INTEGER, INTENT(IN) ::          IDS,IDE, JDS,JDE, KDS,KDE , &
@@ -33,92 +40,121 @@ CONTAINS
                                                              QH
 
       REAL, DIMENSION( IMS:IME, KMS:KME, JMS:JME ),               &
-            INTENT(IN ) ::  W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY
+            INTENT(IN ) :: W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY
 
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME)::       LPI
 
 ! DEFINE LOCAL DATA
       REAL, DIMENSION(KTS:KTE):: TEMPC
-      REAL, DIMENSION(KTS:KTE):: QL1D,QI1D,QS1D,QG1D,W1D,DZ1D
+      REAL :: AIR_VOL, AIR_MASS, GRAUP_MASS, ICE_MASS, SNOW_MASS
+      REAL :: TMP1, TMP2, VTG, VTS, ICE_MASS_FLUX, PRECIP_MASS_FLUX
+      REAL :: IWP
+      REAL :: FLUXPROD, LIGHTFLUX, LIGHTIWP, LIGHTPRECIP_ICE
+      REAL :: LIGHT_GRAUPEL_VOL, LIGHT_WMAX
+      REAL :: W_VOL, LIGHTWVOL
 
-      INTEGER ::               I,J,K
+      INTEGER         ::            I,J,K
 
-      REAL, PARAMETER :: T_BASE= 0
-      REAL, PARAMETER :: T_TOP=-20
+      REAL, PARAMETER :: TMAXC    =  -5.    ! TEMPERATURE THRESHOLD IN CELSIUS
+      REAL, PARAMETER :: WMIN     =   5.    ! VERTICAL VEL THRESHOLD (M/S)
+      REAL, PARAMETER :: CELS2K   = 273.15
+      REAL, PARAMETER :: XNOG     =   4.0E4 !LIN SNOW FALL SPEED
+      REAL, PARAMETER :: CDRAG    =   0.6
+      REAL, PARAMETER :: RHOGRAUL = 917. ! DENSITY OF GRAUPEL KG/M^3 ! ONLY 500 IN MODULE_MP_THOMPSON.F
+      REAL, PARAMETER :: XNOS     =   3.0E6
+      REAL, PARAMETER :: RHOSNOW  = 100.! KG/M3 DENSITY OF SNOW
+      REAL, PARAMETER :: CONSTD   =   0.25
+      ! FF CONSTANT TIED TO 3KM GRID ON WHICH RELATIONSHIPS WERE DEVELOPED
+      ! DO NOT CHANGE FOR OTHER GRID SPACINGS
+      REAL, PARAMETER :: FF       = 3000*3000
+      REAL, PARAMETER :: EXPON    = 1-CONSTD
+      REAL, PARAMETER :: CONSTC   = 152.93*0.01**EXPON
+      REAL, PARAMETER :: GAMDP4   = GAMMA(CONSTD+4.)
+      REAL, PARAMETER :: GAM4PT5  = GAMMA(4.5)
 
       CHARACTER*256 :: MESSAGE
-
 !-------------------------------------------------------------------
+
       DO J = JTS,JTE
-          DO I = ITS,ITE
+         DO I = ITS,ITE
+
+            ! INITIALIZE VERTICAL TOTALS TO ZERO
+            AIR_MASS         = 0.
+            GRAUP_MASS       = 0.
+            ICE_MASS         = 0.
+            SNOW_MASS        = 0.
+            PRECIP_MASS_FLUX = 0.
+            ICE_MASS_FLUX    = 0.
+            W_VOL            = 0.
+
+            ! CALCULATE MASS AND FLUX WITH A SINGLE LOOP THRU THE VERTICAL
             DO K = KTS,KTE
-              W1D(K)=W(I,K,J)
-              DZ1D(K)=DZ8W(I,K,J)
-              TEMPC(K) = TH_PHY(I,K,J)*PI_PHY(I,K,J)-T_0
-              QL1D(K)=QC(I,K,J)+QR(I,K,J)
-              QI1D(K)=QI(I,K,J)
-              QS1D(K)=QS(I,K,J)
-              ! IGNORE QH. HAIL DOESN'T USUALLY CHARGE
-              QG1D(K)=QG(I,K,J)
-            ENDDO
-            LPI(I,J) = CALC_LPI(QL1D,QI1D,QS1D,QG1D,W1D,TEMPC,DZ1D,T_BASE,T_TOP,KTS,KTE)
-          END DO
+
+               ! TEMPERATURE OF LAYER (CELSIUS)
+               TEMPC(K)     = TH_PHY(I,K,J)*PI_PHY(I,K,J)-CELS2K
+
+               ! CHECK TEMPERATURE
+               ! ADD TO MASS OF AIR AND GRAUPEL IN GRID VOLUME IF TEMPERATURE IS AT OR BELOW TMAXC.
+               ! ALSO ADD TO ICE AND PRECIP MASS FLUX IF TEMP <= TMAXC
+               IF(TEMPC(K).LE.TMAXC)THEN 
+                   
+                  ! COULD FORCE POSITIVE MIXING RATIOS HERE, BUT NEGATIVE VALUES ARE SMALL?
+
+                  AIR_VOL    = FF * DZ8W(I,K,J)
+                  AIR_MASS   = AIR_MASS   + (AIR_VOL * RHO_PHY(I,K,J)) 
+                  GRAUP_MASS = GRAUP_MASS + (QG(I,K,J) * AIR_MASS)
+                  ICE_MASS   = ICE_MASS   + (QI(I,K,J) * AIR_MASS)
+                  SNOW_MASS  = SNOW_MASS  + (QS(I,K,J) * AIR_MASS)
+
+                  ! ADD TO PRECIP MASS FLUX IF QG>1E-8
+                  IF(QG(I,K,J).GT.1E-8)THEN
+
+                     TMP1 = 1./(PICONST*RHOGRAUL*XNOG/(RHO_PHY(I,K,J)*QG(I,K,J)))**0.25
+                     TMP2 = SQRT(4.*0.33334*GRAV*RHOGRAUL/(CDRAG*RHO_PHY(I,K,J)))
+                     VTG = (1./6.)*GAM4PT5*TMP2*SQRT(TMP1)
+
+                     PRECIP_MASS_FLUX = PRECIP_MASS_FLUX + ( GRAUP_MASS * VTG ) ! IF YOU SUBTRACT W FROM VTG, YOU MAY GET NEGATIVE FLUX
+                  END IF
+
+                  ! ADD TO ICE MASS FLUX IF QS>1E-8
+                  IF(QS(I,K,J).GT.1E-8)THEN
+
+                     TMP1 = (PICONST*RHOSNOW*XNOS/(RHO_PHY(I,K,J)*QS(I,K,J)))**0.25
+                     TMP2 = SQRT(1.29/RHO_PHY(I,K,J))
+                     VTS = (1./6.) * CONSTC * GAMDP4 * TMP2 / (TMP1**CONSTD)
+
+                     ! IF VERTICAL MOTION EXCEEDS SNOW FALL SPEED AND VERTICAL MOTION > 0,
+                     !  ADD SNOW AND ICE MASS FLUX TO TOTAL ICE MASS FLUX
+                     IF(W(I,K,J).GT.VTS .AND. W(I,K,J).GT.0) THEN
+                        ICE_MASS_FLUX = ICE_MASS_FLUX + SNOW_MASS * (W(I,K,J)-VTS) + ICE_MASS * W(I,K,J)
+                     ELSE
+                        ! ELSE IF FALL SPEED EXCEEDS VERTICAL MOTION OR VERTICAL MOTION < 0,
+                        !   ADD SNOW MASS FLUX TO PRECIP MASS FLUX
+                        PRECIP_MASS_FLUX = PRECIP_MASS_FLUX + ( SNOW_MASS * VTS )
+                     END IF
+                   END IF
+
+                   ! ADD TO UPDRAFT VOLUME IF W EXCEEDS W THRESHOLD
+                   IF (W(I,K,J).GT.WMIN) W_VOL = W_VOL + AIR_VOL
+
+               END IF
+            END DO
+
+            IWP       = SNOW_MASS + ICE_MASS + GRAUP_MASS
+
+            FLUXPROD  = ICE_MASS_FLUX * PRECIP_MASS_FLUX
+
+            ! VARIOUS LIGHTNING FLASH DENSITY ESTIMATES
+            LIGHTFLUX       = FLUXPROD * 9E-17
+            LIGHTIWP        =     IWP  * 33.33E-8 - 6
+            LIGHTPRECIP_ICE =       7. * GRAUP_MASS *3.4E-8
+            LIGHTWVOL       =    W_VOL * 6.75E-10                ! Deierling and Petersen 2008
+
+            LPI(I,J) = LIGHTFLUX
+
+         END DO
       END DO
       RETURN
       END SUBROUTINE CALCLPI
 
-
-
-      FUNCTION CALC_LPI(QL,QI,QS,QG,W,T,DZ,T_BASE,T_TOP,KTS,KTE)
-      IMPLICIT NONE
-      INTEGER, INTENT(IN   ) :: KTS,KTE
-      REAL,    INTENT(IN   ) :: T_BASE,T_TOP
-      REAL, DIMENSION(KTS:KTE), INTENT(IN) :: QL,QI,QS,QG,W
-      REAL, DIMENSION(KTS:KTE), INTENT(IN) :: T     ! TEMPERATURE IN CELSIUS
-      REAL, DIMENSION(KTS:KTE), INTENT(IN) :: DZ    ! THICKNESS OF LAYER
-      REAL :: CALC_LPI
-
-
-!...DEFINE LOCAL VARIABLES
-
-      INTEGER K
-      REAL DEL_Z_TOT
-      REAL NUM,DEN,AVE_Z
-      REAL NUM_S,DEN_S
-      REAL NUM_I,DEN_I
-      REAL Q_ISG
-
-      AVE_Z=0
-      DEL_Z_TOT=0
-      CALC_LPI=0
-      DO K=KTS,KTE
-          IF (T(K).LE.T_BASE.AND.T(K).GT.T_TOP)THEN ! SET TEMP RANGE
-              Q_ISG = 0
-              NUM_I = SQRT(QI(K)*QG(K))
-              DEN_I = QI(K)+QG(K)
-              IF (DEN_I.GT.0) THEN
-                  Q_ISG = Q_ISG + QG(K) * (NUM_I/DEN_I)
-              END IF
-
-              NUM_S = SQRT(QS(K)*QG(K))   
-              DEN_S = QS(K)+QG(K)
-              IF (DEN_S.GT.0) THEN
-                  Q_ISG = Q_ISG + QG(K) * (NUM_S/DEN_S)  ! ICE "FRACT"-CONTENT
-              END IF
-
-              NUM   = SQRT(QL(K)*Q_ISG)
-              DEN   = QL(K)+Q_ISG
-              IF (DEN.GT.0)THEN
-                  AVE_Z = AVE_Z + DZ(K)*(2.*NUM/DEN)*W(K)**2 ! LIGHTNING POTENTIAL INDEX J/UNIT-MASS
-              END IF
-              DEL_Z_TOT = DEL_Z_TOT + DZ(K)
-          END IF
-      END DO
-!
-      IF (DEL_Z_TOT.GT.0) THEN
-          CALC_LPI=AVE_Z/DEL_Z_TOT
-      END IF
-!
-      RETURN
-      END FUNCTION CALC_LPI
   END MODULE MODULE_LTNG_LPI
