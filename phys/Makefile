@@ -82,6 +82,7 @@ MODULES = \
 	module_mp_thompson.o \
 	module_mp_full_sbm.o \
 	module_mp_fast_sbm.o \
+	module_ltng_fed.o \
 	module_ltng_lpi.o \
 	module_mp_gsfcgce.o \
 	module_mp_morr_two_moment.o \
