@@ -23,7 +23,8 @@
  io_form_restart                     = 2
  io_form_input                       = 2
  io_form_boundary                    = 2
- debug_level                         = 0
+ iofields_filename                   = "iofields.txt"
+ debug_level                         = 100
  /
 
  &domains
@@ -51,7 +52,7 @@
  /
 
  &physics
- mp_physics                          = 0,     0,     0,
+ mp_physics                          = 8,     0,     0,
  ra_lw_physics                       = 0,     0,     0,
  ra_sw_physics                       = 0,     0,     0,
  radt                                = 30,    30,    30,
@@ -62,6 +63,9 @@
  cu_physics                          = 0,     0,     0,
  cudt                                = 5,     5,     5,
  num_soil_layers                     = 5,
+ do_radar_ref                        = 1,
+ lightning_option                    = 101,
+ lightning_dt                        = 600,
  /
 
  &fdda
