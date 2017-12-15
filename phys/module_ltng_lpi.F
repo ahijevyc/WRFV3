@@ -16,7 +16,7 @@ CONTAINS
       SUBROUTINE CALCLPI(                                         &
                          QV,QC,QR,QI,QS,QG,QH                     &
                         ,W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY     &
-                        ,LPI                                      &
+                        ,LPI,DX,DY                                &
                         ,IDS,IDE, JDS,JDE, KDS,KDE                & ! domain
                         ,IMS,IME, JMS,JME, KMS,KME                & ! memory
                         ,ITS,ITE, JTS,JTE, KTS,KTE                & ! tile
@@ -42,6 +42,7 @@ CONTAINS
       REAL, DIMENSION( IMS:IME, KMS:KME, JMS:JME ),               &
             INTENT(IN ) :: W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY
 
+      REAL, INTENT(IN)                             ::     DX,DY
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME)::       LPI
 
 ! DEFINE LOCAL DATA
@@ -64,9 +65,6 @@ CONTAINS
       REAL, PARAMETER :: XNOS     =   3.0E6
       REAL, PARAMETER :: RHOSNOW  = 100.! KG/M3 DENSITY OF SNOW
       REAL, PARAMETER :: CONSTD   =   0.25
-      ! FF CONSTANT TIED TO 3KM GRID ON WHICH RELATIONSHIPS WERE DEVELOPED
-      ! DO NOT CHANGE FOR OTHER GRID SPACINGS
-      REAL, PARAMETER :: FF       = 3000*3000
       REAL, PARAMETER :: EXPON    = 1-CONSTD
       REAL, PARAMETER :: CONSTC   = 152.93*0.01**EXPON
       REAL, PARAMETER :: GAMDP4   = GAMMA(CONSTD+4.)
@@ -100,7 +98,7 @@ CONTAINS
                    
                   ! COULD FORCE POSITIVE MIXING RATIOS HERE, BUT NEGATIVE VALUES ARE SMALL?
 
-                  AIR_VOL    = FF * DZ8W(I,K,J)
+                  AIR_VOL    = DX * DY * DZ8W(I,K,J)
                   AIR_MASS   = AIR_MASS   + (AIR_VOL * RHO_PHY(I,K,J)) 
                   GRAUP_MASS = GRAUP_MASS + (QG(I,K,J) * AIR_MASS)
                   ICE_MASS   = ICE_MASS   + (QI(I,K,J) * AIR_MASS)
@@ -150,7 +148,7 @@ CONTAINS
             LIGHTPRECIP_ICE =       7. * GRAUP_MASS *3.4E-8
             LIGHTWVOL       =    W_VOL * 6.75E-10                ! Deierling and Petersen 2008
 
-            LPI(I,J) = LIGHTFLUX
+            LPI(I,J) = LIGHTPRECIP_ICE
 
          END DO
       END DO
