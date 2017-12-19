@@ -220,7 +220,7 @@ CONTAINS
           ! Mandatory outputs for all quantitative schemes
             grid%ic_flashcount, grid%ic_flashrate,          &
             grid%cg_flashcount, grid%cg_flashrate,          &
-            grid%lpi                                        &   
+            grid%lpi,grid%fed                               &   
       )    
       END IF LIGHTNING
 
