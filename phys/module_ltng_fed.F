@@ -18,7 +18,7 @@ CONTAINS
                         ,W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY     & ! DZ8W is thickness (meters) of each model layer
                         ,DX,DY                                    &
                         !FLASH_EXTENT_DENSITY                     &
-                        ,LPI                                      &
+                        ,FED                                      &
                         ,IDS,IDE, JDS,JDE, KDS,KDE                & ! domain
                         ,IMS,IME, JMS,JME, KMS,KME                & ! memory
                         ,ITS,ITE, JTS,JTE, KTS,KTE                & ! tile
@@ -50,7 +50,7 @@ CONTAINS
 
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME)::             &
           !FLASH_EXTENT_DENSITY
-          LPI
+          FED
 
 ! DEFINE LOCAL DATA
       REAL, DIMENSION(KTS:KTE):: TEMPC
@@ -157,12 +157,12 @@ CONTAINS
 
             ! VARIOUS LIGHTNING FLASH EXTENT DENSITY ESTIMATES
             LIGHTFLUX       = FLUXPROD * 9E-17
-            LIGHTIWP        =     IWP  * 33.33E-8 - 6
+            LIGHTIWP        =     IWP  * 0.20 / 2000**2 * DX * DY ! McCaul et al. 2009
             LIGHTPRECIP_ICE =       7. * GRAUP_MASS *3.4E-8
             LIGHTWVOL       =    W_VOL * 6.75E-10                ! Deierling and Petersen 2008
 
             !FLASH_EXTENT_DENSITY(I,J) = LIGHTFLUX
-            LPI(I,J) = LIGHTFLUX
+            FED(I,J) = LIGHTIWP
 
          END DO
       END DO
