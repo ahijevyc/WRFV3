@@ -2866,7 +2866,6 @@ state    real    ic_flashcount        ij     misc    1   -   rh    "ic_flashcoun
 state    real    ic_flashrate         ij     misc    1   -   r     "ic_flashrate"          "IC flash rate"                  "#/s"
 state    real    cg_flashcount        ij     misc    1   -   rh    "cg_flashcount"         "Accumulated CG flash count"     "#"
 state    real    cg_flashrate         ij     misc    1   -   r     "cg_flashrate"          "CG flash rate"                  "#/s"
-state    real    flash_extent_density ij     misc    1   -   rh01  "flash_extent_density"  "flash extent density"           "# km-2 min-1"
 
 rconfig  integer    lightning_option         namelist,physics   max_domains    0      h    "lightning_option"          "Lightning flash parameterization"       ""
 rconfig  real       lightning_dt             namelist,physics   max_domains    0.     -    "lightning_dt"              ""                                       "s"
