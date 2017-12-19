@@ -421,7 +421,7 @@
                      QS=moist(ims,kms,jms,P_QS),         &   !qs_curr,                         &
                      QG=moist(ims,kms,jms,P_QG),         &   !qg_curr,                         &
                      QH=moist(ims,kms,jms,P_QH),         &   !qh_curr,                         &
-                  lpi=lpi &
+                  lpi=lpi,DX=dx,DY=dy &
                  ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &
                  ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
                  ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte)
