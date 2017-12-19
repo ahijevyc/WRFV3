@@ -16,3 +16,7 @@
 configure.wrf*
 *.backup
 *.f90
+run/
+test/
+tools/
+
