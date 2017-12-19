@@ -63,7 +63,7 @@
  cudt                                = 5,     5,     5,
  num_soil_layers                     = 5,
  do_radar_ref                        = 1
- lightning_option                    = 3
+ lightning_option                    = 101
  lightning_dt                        = 12
  /
 
