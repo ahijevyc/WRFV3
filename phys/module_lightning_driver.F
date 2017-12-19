@@ -318,12 +318,15 @@
 
 !-----------------------------------------------------------------
 ! This driver performs several steps in order to produce lightning
-! flash rate and flash count diagnostics:
+! flash rate and flash count diagnostics (if needed):
 !
 ! 1. Determine cloud extents for specific CRM schemes
 ! 2. Total flash rate assignment to 2D array
 ! 3. Partitioning of total lightning into IC & CG
 ! 4. Scale flash rate by flashrate_factor and lightning_dt
+!
+! Produce lightning potential index or flash extent density
+! lightning_option = 3 or 101
 !
 !-----------------------------------------------------------------
 
