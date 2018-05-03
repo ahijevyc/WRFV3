@@ -126,7 +126,7 @@
         WRITE(message, * ) ' lightning_init: FED lightning option selected: ', lightning_option
         CALL wrf_debug ( 100 , message )
 
-        IF ( mp_physics .NE. THOMPSON ) THEN
+        IF ( mp_physics .NE. THOMPSON .AND. mp_physics .NE. THOMPSONAERO ) THEN
           CALL wrf_error_fatal( ' lightning_init: FED lightning option requires Thompson microphysics (mp_physics=8)')
         ENDIF
 
@@ -226,8 +226,9 @@
                             its, ite, jts, jte, kts, kte,         &
                           ! Mandatory outputs for all quantitative schemes
                             ic_flashcount, ic_flashrate,          &
-                            cg_flashcount, cg_flashrate,           &
-                            lpi,fed                                &
+                            cg_flashcount, cg_flashrate,          &
+                            lpi,fed,fed1,fed2,fed3,fed4,          &
+                            fed5,fed6,fed7,fed8,fed9              &
                           )
 !-----------------------------------------------------------------
 ! Framework
@@ -272,6 +273,8 @@
 
  REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: LPI
  REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED
+ REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED1,FED2,FED3,FED4,FED5
+ REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED6,FED7,FED8,FED9
 ! Mandatory namelist inputs
  INTEGER, INTENT(IN   )    ::       lightning_option
  REAL,    INTENT(IN   )    ::       lightning_dt, lightning_start_seconds, flashrate_factor
@@ -447,7 +450,10 @@
                   fed=fed, dx=dx, dy=dy                  &
                  ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &
                  ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
-                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte)
+                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte &
+                 ,FED1=fed1,FED2=fed2,FED3=fed3,FED4=fed4,FED5=fed5 &
+                 ,FED6=fed6,FED7=fed7,FED8=fed8,FED9=fed9           &
+                 )
         ELSE
         WRITE(wrf_err_message, * ) ' lightning_driver: FED option needs Microphysics Option with graupel,snow,and ice '
         CALL wrf_error_fatal ( wrf_err_message )

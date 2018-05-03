@@ -22,6 +22,8 @@ CONTAINS
                         ,IDS,IDE, JDS,JDE, KDS,KDE                & ! domain
                         ,IMS,IME, JMS,JME, KMS,KME                & ! memory
                         ,ITS,ITE, JTS,JTE, KTS,KTE                & ! tile
+                        ,FED1, FED2, FED3, FED4, FED5, FED6       & ! OPTIONAL
+                        ,FED7, FED8, FED9                         &
                                                                   )
 
       USE MODULE_WRF_ERROR
@@ -51,6 +53,9 @@ CONTAINS
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME)::             &
           !FLASH_EXTENT_DENSITY
           FED
+
+      REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME), OPTIONAL ::  &
+          FED1, FED2, FED3, FED4, FED5, FED6, FED7, FED8, FED9
 
 ! DEFINE LOCAL DATA
       REAL, DIMENSION(KTS:KTE):: TEMPC
@@ -162,7 +167,8 @@ CONTAINS
             LIGHTWVOL       =    W_VOL * 6.75E-10                ! Deierling and Petersen 2008
 
             !FLASH_EXTENT_DENSITY(I,J) = LIGHTFLUX
-            FED(I,J) = LIGHTIWP
+            FED(I,J)  = LIGHTIWP
+            FED1(I,J) = LIGHTWVOL
 
          END DO
       END DO
