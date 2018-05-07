@@ -127,7 +127,7 @@
         CALL wrf_debug ( 100 , message )
 
         IF ( mp_physics .NE. THOMPSON .AND. mp_physics .NE. THOMPSONAERO ) THEN
-          CALL wrf_error_fatal( ' lightning_init: FED lightning option requires Thompson microphysics (mp_physics=8)')
+          CALL wrf_error_fatal( ' lightning_init: FED lightning option requires Thompson microphysics (mp_physics=8 or 28)')
         ENDIF
 
 #endif
@@ -227,7 +227,9 @@
                           ! Mandatory outputs for all quantitative schemes
                             ic_flashcount, ic_flashrate,          &
                             cg_flashcount, cg_flashrate,          &
-                            lpi,fed,fed1,fed2,fed3,fed4,          &
+                            lpi,fed,                              &
+                          ! Optional outputs for flash extent density scheme
+                                 fed1,fed2,fed3,fed4,             &
                             fed5,fed6,fed7,fed8,fed9              &
                           )
 !-----------------------------------------------------------------
@@ -273,8 +275,8 @@
 
  REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: LPI
  REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED
- REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED1,FED2,FED3,FED4,FED5
- REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED6,FED7,FED8,FED9
+ REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL ::      FED1,FED2,FED3,FED4
+ REAL, DIMENSION( ims:ime, jms:jme ), INTENT(INOUT), OPTIONAL :: FED5,FED6,FED7,FED8,FED9
 ! Mandatory namelist inputs
  INTEGER, INTENT(IN   )    ::       lightning_option
  REAL,    INTENT(IN   )    ::       lightning_dt, lightning_start_seconds, flashrate_factor
