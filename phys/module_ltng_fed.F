@@ -17,7 +17,6 @@ CONTAINS
                          QV,QC,QR,QI,QS,QG,QH                     &
                         ,W,Z,DZ8W,PI_PHY,TH_PHY,P_PHY,RHO_PHY     & ! DZ8W is thickness (meters) of each model layer
                         ,DX,DY                                    &
-                        !FLASH_EXTENT_DENSITY                     &
                         ,FED                                      &
                         ,IDS,IDE, JDS,JDE, KDS,KDE                & ! domain
                         ,IMS,IME, JMS,JME, KMS,KME                & ! memory
@@ -51,7 +50,6 @@ CONTAINS
       REAL, INTENT(IN ) :: DX, DY ! GRID SPACING IN METERS
 
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME)::             &
-          !FLASH_EXTENT_DENSITY
           FED
 
       REAL, INTENT(OUT), DIMENSION(IMS:IME,JMS:JME), OPTIONAL ::  &
@@ -65,12 +63,13 @@ CONTAINS
       REAL :: IWP
       REAL :: FLUXPROD, LIGHTFLUX, LIGHTIWP, LIGHTPRECIP_ICE
       REAL :: LIGHT_GRAUPEL_VOL, LIGHT_WMAX
-      REAL :: W_VOL, LIGHTWVOL
+      REAL :: W_VOL, W_VOL2, LIGHTWVOL, LIGHTWVOL2
 
       INTEGER         ::            I,J,K
 
-      REAL, PARAMETER :: TMAXC    =  -5.    ! TEMPERATURE THRESHOLD IN CELSIUS
+      REAL, PARAMETER :: TMAXC    =   0.    ! TEMPERATURE THRESHOLD IN CELSIUS
       REAL, PARAMETER :: WMIN     =   5.    ! VERTICAL VEL THRESHOLD (M/S)
+      REAL, PARAMETER :: WMIN2    =   0.    ! VERTICAL VEL THRESHOLD (M/S)
       REAL, PARAMETER :: CELS2K   = 273.15
       REAL, PARAMETER :: XNOG     =   4.0E4 !LIN SNOW FALL SPEED
       REAL, PARAMETER :: CDRAG    =   0.6
@@ -99,6 +98,7 @@ CONTAINS
             PRECIP_MASS_FLUX = 0.
             ICE_MASS_FLUX    = 0.
             W_VOL            = 0.
+            W_VOL2           = 0.
 
             ! CALCULATE MASS AND FLUX WITH A SINGLE LOOP THRU THE VERTICAL
             DO K = KTS,KTE
@@ -150,7 +150,8 @@ CONTAINS
                    END IF
 
                    ! ADD TO UPDRAFT VOLUME IF W EXCEEDS W THRESHOLD
-                   IF (W(I,K,J).GT.WMIN) W_VOL = W_VOL + AIR_VOL
+                   IF (W(I,K,J).GT.WMIN)  W_VOL  = W_VOL  + AIR_VOL
+                   IF (W(I,K,J).GT.WMIN2) W_VOL2 = W_VOL2 + AIR_VOL
 
                END IF
             END DO
@@ -160,15 +161,20 @@ CONTAINS
             FLUXPROD  = ICE_MASS_FLUX * PRECIP_MASS_FLUX
 
 
-            ! VARIOUS LIGHTNING FLASH EXTENT DENSITY ESTIMATES
+            ! LIGHTNING FLASH EXTENT DENSITY ESTIMATES
             LIGHTFLUX       = FLUXPROD * 9E-17
             LIGHTIWP        =     IWP  * 0.20 / 2000**2 * DX * DY ! McCaul et al. 2009
             LIGHTPRECIP_ICE =       7. * GRAUP_MASS *3.4E-8
             LIGHTWVOL       =    W_VOL * 6.75E-10                ! Deierling and Petersen 2008
+            LIGHTWVOL2      =   W_VOL2 * 6.75E-10                ! Deierling and Petersen 2008
 
-            !FLASH_EXTENT_DENSITY(I,J) = LIGHTFLUX
             FED(I,J)  = LIGHTIWP
+
             FED1(I,J) = LIGHTWVOL
+            FED2(I,J) = LIGHTWVOL2
+            FED3(I,J) = LIGHTIWP
+            FED4(I,J) = LIGHTPRECIP_ICE
+            FED5(I,J) = LIGHTFLUX
 
          END DO
       END DO
