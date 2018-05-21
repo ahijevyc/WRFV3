@@ -5,13 +5,13 @@
  run_seconds                         = 0,
  start_year                          = 2018,2018,
  start_month                         = 05,05,
- start_day                           = 01,01,
+ start_day                           = 15,15,
  start_hour                          = 12,12,
  start_minute                        = 00,   00,   00,  00,  00,  00,
  start_second                        = 00,   00,   00,  00,  00,  00,
  end_year                            = 2018,2018,
  end_month                           = 05,05,
- end_day                             = 01,01,
+ end_day                             = 15,15,
  end_hour                            = 15,15,
  end_minute                          = 00,   00,    5,   5,   5,   5,
  end_second                          = 00,   00,   00,  00,  00,  00,
@@ -25,7 +25,7 @@
  io_form_restart                     = 2
  io_form_input                       = 2
  io_form_boundary                    = 2
- debug_level                         = 100
+ debug_level                         = 300
  /
 
  &domains
@@ -149,7 +149,7 @@
  fractional_seaice                   = 0,
  seaice_threshold                    = 271.4
  aer_opt                             = 3,
- lightning_option                    = 0,     0,
+ lightning_option                    = 0,    1 
  lightning_dt                        = 0,    75,
  /
 
