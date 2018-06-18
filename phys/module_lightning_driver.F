@@ -40,6 +40,7 @@
                             ! IC and CG flash rates and accumulated flash count
                              ,ic_flashcount, ic_flashrate              &
                              ,cg_flashcount, cg_flashrate              &
+                             ,lpi                                      &
 #if ( WRF_CHEM == 1 )
                              ,lnox_opt,lnox_passive                    &
                             ! LNOx tracers (chemistry only)
@@ -66,7 +67,7 @@
 ! Making these optional just in case qualitative lightning indices get implemented
  REAL, OPTIONAL, DIMENSION( ims:ime,jms:jme ), &
                  INTENT(OUT) :: ic_flashcount, ic_flashrate, &
-                                cg_flashcount, cg_flashrate
+                                cg_flashcount, cg_flashrate, lpi
 
 #if ( WRF_CHEM == 1 )
  INTEGER, INTENT(IN)         :: lnox_opt
@@ -152,6 +153,14 @@
     CALL wrf_error_fatal ( ' lightning_init: flash arrays not present' )
  ENDIF
 
+ IF (lightning_option .eq. ltng_lpi) THEN
+     IF ( PRESENT( lpi ) ) THEN
+         lpi(:,:) = 0. 
+     ELSE 
+         CALL wrf_error_fatal ( ' lightning_init: LPI array not present' )
+     ENDIF
+
+ ENDIF
 !-- Resolve auto-cellcount method option (cellcount_method=0)
  IF ( ( cellcount_method .eq. 0 ) .and. (lightning_option .eq. ltng_crm_PR92w )) THEN
    IF ( (ime-ims+1)*dx .gt. 1E4 ) THEN ! use patch only if path size > 10 km

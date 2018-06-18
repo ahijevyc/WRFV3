@@ -1,21 +1,21 @@
  &time_control
  run_days                            = 0,
- run_hours                           = 3
+ run_hours                           = 6
  run_minutes                         = 0,
  run_seconds                         = 0,
  start_year                          = 2018,2018,
  start_month                         = 05,05,
- start_day                           = 15,15,
- start_hour                          = 12,12,
+ start_day                           = 1,1,
+ start_hour                          = 18,18,
  start_minute                        = 00,   00,   00,  00,  00,  00,
  start_second                        = 00,   00,   00,  00,  00,  00,
  end_year                            = 2018,2018,
  end_month                           = 05,05,
- end_day                             = 15,15,
- end_hour                            = 15,15,
+ end_day                             = 2,2,
+ end_hour                            = 0,0,
  end_minute                          = 00,   00,    5,   5,   5,   5,
  end_second                          = 00,   00,   00,  00,  00,  00,
- interval_seconds                    = 10800,
+ interval_seconds                    = 21600,
  input_from_file                     = .true., .true., .true.,
  history_interval                    = 60,   60,   60,
  frames_per_outfile                  = 1,     1,    1,
@@ -25,7 +25,7 @@
  io_form_restart                     = 2
  io_form_input                       = 2
  io_form_boundary                    = 2
- debug_level                         = 300
+ debug_level                         = 1
  /
 
  &domains
@@ -33,16 +33,17 @@
  time_step_fract_num                 = 0,
  time_step_fract_den                 = 1,
  max_dom                             = 2,
- e_we                                = 420,1151,
- e_sn                                = 320,961,
+ e_we                                = 210, 791,
+ e_sn                                = 160, 501,
+ e_vert                              = 41, 41,
  num_metgrid_levels                  = 32,
  num_metgrid_soil_levels             = 4,
  dx                                  = 15000.0000,3000.0000,
  dy                                  = 15000.0000,3000.0000,
- grid_id                             = 1,     2,     3,    4,    5,    6,
- parent_id                           = 0,     1,     2,    2,    3,    2,
- i_parent_start                      = 1,155,
- j_parent_start                      = 1,60,
+ grid_id                             = 1,     2,
+ parent_id                           = 0,     1,
+ i_parent_start                      = 1,35,
+ j_parent_start                      = 1,30,
  parent_grid_ratio                   = 1,5,
  parent_time_step_ratio              = 1,4
  feedback                            = 1,
@@ -143,14 +144,13 @@
  ensdim                              = 144,
  usemonalb                           = .true.,
  rdlai2d                             = .true.,
- num_land_cat                        = 20,
  mosaic_lu                           = 1
  mosaic_soil                         = 1
  fractional_seaice                   = 0,
  seaice_threshold                    = 271.4
  aer_opt                             = 3,
- lightning_option                    = 0,    1 
- lightning_dt                        = 0,    75,
+ lightning_option                    = 101,    0 
+ lightning_dt                        = 75,    15,
  /
 
  &dynamics
@@ -189,9 +189,6 @@
  /
 
  &namelist_quilt
- nio_tasks_per_group = 9,
- nio_groups = 4,
- /
- nio_tasks_per_group = 8,
- nio_groups = 4,
+ nio_tasks_per_group = 0,
+ nio_groups = 0,
  /
